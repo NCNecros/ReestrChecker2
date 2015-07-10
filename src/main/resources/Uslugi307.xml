@@ -1,0 +1,319 @@
+<uslugi307List>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.001.001</string>
+            <string>B01.001.002</string>
+            <string>B01.001.003</string>
+            <string>B01.001.004</string>
+            <string>B01.001.010</string>
+            <string>B01.001.011</string>
+            <string>B01.001.016</string>
+            <string>B01.001.017</string>
+        </uslugi>
+        <doctor>акушер-гинеколог</doctor>
+        <obrashenie>B01.001.019</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.001.013</string>
+            <string>B01.001.014</string>
+            <string>B01.001.012</string>
+        </uslugi>
+        <obrashenie>B01.001.020</obrashenie>
+        <doctor>акушер-гинеколог (дети)</doctor>
+    </uslugi307>
+
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.004.001</string>
+            <string>B01.004.002</string>
+            <string>B01.004.008</string>
+        </uslugi>
+        <doctor>гастроэнтеролог</doctor>
+        <obrashenie>B01.004.009</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.004.005</string>
+            <string>B01.004.006</string>
+            <string>B01.004.007</string>
+        </uslugi>
+        <doctor>гастроэнтеролог (дети)</doctor>
+        <obrashenie>B01.004.010</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.010.001</string>
+            <string>B01.010.002</string>
+            <string>B01.010.004</string>
+            <string>B01.010.006</string>
+        </uslugi>
+        <obrashenie>B01.010.007</obrashenie>
+        <doctor>хирург (дети)</doctor>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.014.001</string>
+            <string>B01.014.002</string>
+            <string>B01.014.005</string>
+            <string>B01.014.006</string>
+            <string>B01.014.007</string>
+            <string>B01.014.008</string>
+            <string>B01.014.009</string>
+            <string>B01.014.010</string>
+            <string>B01.014.011</string>
+            <string>B01.014.021</string>
+        </uslugi>
+        <doctor>инфекционист</doctor>
+        <obrashenie>B01.014.023</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.014.012</string>
+            <string>B01.014.013</string>
+            <string>B01.014.014</string>
+            <string>B01.014.015</string>
+            <string>B01.014.016</string>
+            <string>B01.014.017</string>
+            <string>B01.014.018</string>
+            <string>B01.014.019</string>
+            <string>B01.014.020</string>
+        </uslugi>
+        <doctor>инфекционист (дети)</doctor>
+        <obrashenie>B01.014.024</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.015.001</string>
+            <string>B01.015.002</string>
+            <string>B01.015.003</string>
+            <string>B01.015.004</string>
+            <string>B01.015.010</string>
+            <string>B01.015.012</string>
+        </uslugi>
+        <doctor>кардиолог</doctor>
+        <obrashenie>B01.015.014</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.015.009</string>
+            <string>B01.015.013</string>
+        </uslugi>
+        <doctor>кардиолог (дети)</doctor>
+        <obrashenie>B01.015.015</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.018.001</string>
+            <string>B01.018.002</string>
+            <string>B01.018.004</string>
+        </uslugi>
+        <doctor>колопроктолог</doctor>
+        <obrashenie>B01.018.005</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.023.001</string>
+            <string>B01.023.002</string>
+            <string>B01.023.004</string>
+            <string>B01.023.010</string>
+        </uslugi>
+        <doctor>невролог</doctor>
+        <obrashenie>B01.023.012</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.023.005</string>
+            <string>B01.023.006</string>
+            <string>B01.023.007</string>
+            <string>B01.023.009</string>
+        </uslugi>
+        <doctor>невролог (дети)</doctor>
+        <obrashenie>B01.023.013</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.028.001</string>
+            <string>B01.028.002</string>
+            <string>B01.028.004</string>
+        </uslugi>
+        <doctor>лор</doctor>
+        <obrashenie>B01.028.011</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.028.005</string>
+            <string>B01.028.006</string>
+            <string>B01.028.007</string>
+            <string>B01.028.009</string>
+        </uslugi>
+        <doctor>лор (дети)</doctor>
+        <obrashenie>B01.028.012</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.029.001</string>
+            <string>B01.029.002</string>
+            <string>B01.029.003</string>
+            <string>B01.029.004</string>
+            <string>B01.029.006</string>
+            <string>B01.029.013</string>
+            <string>B01.029.014</string>
+        </uslugi>
+        <doctor>офтальмолог</doctor>
+        <obrashenie>B01.029.015</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.029.007</string>
+            <string>B01.029.008</string>
+            <string>B01.029.009</string>
+            <string>B01.029.010</string>
+        </uslugi>
+        <doctor>офтальмолог (дети)</doctor>
+        <obrashenie>B01.029.016</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.031.001</string>
+            <string>B01.031.002</string>
+            <string>B01.031.009</string>
+            <string>B01.031.010</string>
+            <string>B01.031.012</string>
+            <string>B01.031.014</string>
+        </uslugi>
+        <doctor>педиатр</doctor>
+        <obrashenie>B01.031.016</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.031.003</string>
+            <string>B01.031.004</string>
+            <string>B01.031.006</string>
+            <string>B01.031.008</string>
+            <string>B01.031.013</string>
+        </uslugi>
+        <doctor>педиатр участковый</doctor>
+        <obrashenie>B01.031.016.01</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.037.001</string>
+            <string>B01.037.002</string>
+            <string>B01.037.004</string>
+            <string>B01.037.008</string>
+        </uslugi>
+        <doctor>пульмонолог</doctor>
+        <obrashenie>B01.037.009</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.037.006</string>
+            <string>B01.037.007</string>
+        </uslugi>
+        <doctor>пульмонолог (дети)</doctor>
+        <obrashenie>B01.037.010</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.047.001</string>
+            <string>B01.047.002</string>
+            <string>B01.047.003</string>
+            <string>B01.047.004</string>
+            <string>B01.047.007</string>
+            <string>B01.047.008</string>
+            <string>B01.047.010</string>
+            <string>B01.047.011</string>
+            <string>B01.047.012</string>
+            <string>B01.047.013</string>
+            <string>B01.047.019</string>
+            <string>B01.047.021</string>
+        </uslugi>
+        <doctor>терапевт</doctor>
+        <obrashenie>B01.047.022</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.047.005</string>
+            <string>B01.047.006</string>
+            <string>B01.047.014</string>
+            <string>B01.047.015</string>
+            <string>B01.047.018</string>
+            <string>B01.047.020</string>
+        </uslugi>
+        <doctor>терапевт участковый</doctor>
+        <obrashenie>B01.047.022.01</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.050.001</string>
+            <string>B01.050.002</string>
+            <string>B01.050.004</string>
+            <string>B01.050.008</string>
+        </uslugi>
+        <doctor>травматолог</doctor>
+        <obrashenie>B01.050.012</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.050.006</string>
+            <string>B01.050.007</string>
+            <string>B01.050.009</string>
+            <string>B01.050.010</string>
+        </uslugi>
+        <doctor>травматолог (дети)</doctor>
+        <obrashenie>B01.050.013</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.053.001</string>
+            <string>B01.053.002</string>
+            <string>B01.053.010</string>
+            <string>B01.053.012</string>
+        </uslugi>
+        <doctor>уролог</doctor>
+        <obrashenie>B01.053.013</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.053.003</string>
+            <string>B01.053.004</string>
+            <string>B01.053.007</string>
+            <string>B01.053.008</string>
+        </uslugi>
+        <doctor>уролог (дети)</doctor>
+        <obrashenie>B01.053.014</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.057.001</string>
+            <string>B01.057.002</string>
+            <string>B01.057.003</string>
+            <string>B01.057.004</string>
+            <string>B01.057.007</string>
+            <string>B01.057.008</string>
+        </uslugi>
+        <doctor>хирург</doctor>
+        <obrashenie>B01.057.010</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.058.001</string>
+            <string>B01.058.002</string>
+            <string>B01.058.008</string>
+            <string>B01.058.010</string>
+            <string>B01.058.012</string>
+        </uslugi>
+        <doctor>эндокринолог</doctor>
+        <obrashenie>B01.058.013</obrashenie>
+    </uslugi307>
+    <uslugi307>
+        <uslugi class="java.util.ArrayList">
+            <string>B01.058.003</string>
+            <string>B01.058.004</string>
+            <string>B01.058.011</string>
+        </uslugi>
+        <doctor>эндокринолог (дети)</doctor>
+        <obrashenie>B01.058.014</obrashenie>
+    </uslugi307>
+</uslugi307List>
