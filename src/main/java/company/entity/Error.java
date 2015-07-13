@@ -50,12 +50,12 @@ public class Error {
 
         Error error1 = (Error) o;
 
-        if (!error.equals(error1.error)) return false;
-        if (!human.equals(error1.human)) return false;
-        if (service != null ? !service.equals(error1.service) : error1.service != null) return false;
-        if (visit != null ? !visit.equals(error1.visit) : error1.visit != null) return false;
+//        if (!error.equals(error1.error)) return false;
+//        if (!human.equals(error1.human)) return false;
+//        if (service != null ? !service.equals(error1.service) : error1.service != null) return false;
+//        if (visit != null ? !visit.equals(error1.visit) : error1.visit != null) return false;
 
-        return true;
+        return this.error.equals(error1.error)&&this.human.equals();
     }
 
     @Override

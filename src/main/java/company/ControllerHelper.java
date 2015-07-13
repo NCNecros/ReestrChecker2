@@ -34,6 +34,8 @@ public class ControllerHelper {
     Map<Double, NewService> mapNewService;
     @Resource(name = "errorMap")
     List<Error> errors;
+    @Resource
+    ErrorChecker errorChecker;
     private Controller controller;
 
     public ControllerHelper() {
@@ -67,37 +69,14 @@ public class ControllerHelper {
         helper.readFromP(outdir + File.separator + filelist.get("P")/*, humanMap*/);
         helper.readFromU(outdir + File.separator + filelist.get("U")/*, humanMap*/);
 
+        errorChecker.checkForIncorrectDatN();
 
-        List<NewVisit> visits = new ArrayList<>(mapNewVisit.values());
-        for (NewVisit visit: visits){
-            List<Date> dates = visit.getServices().stream().map(NewService::getDatn).collect(Collectors.toList());
-            if (!dates.contains(visit.getDatn())){
-                errors.add(new Error(visit," нет услуги совпадающей с датой начала"));
-            }
-            if (!dates.contains(visit.getDato())){
-                errors.add(new Error(visit," нет услуги совпадающей с датой окончания"));
-            }
+        errorChecker.checkForMoreThanOneVisit();
 
-        }
-
-        for (NewHuman human : mapNewHuman.values()) {
-            for (NewVisit visit : human.getAllVisits().values()) {
-                List<NewVisit> visitsWithOutCurrent = new ArrayList<>();
-                visitsWithOutCurrent.addAll(human.getAllVisits().values());
-                visitsWithOutCurrent.remove(visit);
-                for (NewVisit otherVisit : visitsWithOutCurrent) {
-                    Boolean res = otherVisit.getMKB().equalsIgnoreCase(visit.getMKB());
-                    if (res && visit.getServices().stream().anyMatch(e -> !e.getKusl().startsWith("B04"))) {
-                        errors.add(new Error(visit," содержит более одного обращения"));
-                    }
-                }
-            }
-        }
-
-        mapNewService.values().stream().filter(e->e.getSpec().equals("1134") && !e.getVmp().equals("12")).forEach(e-> errors.add(new Error(e,"Некорректный вид МП")));
+        errorChecker.checkForIncorrectVMP();
 
         errors.stream().distinct().forEach(System.out::println);
-        System.out.println(errors.stream().distinct().filter(e->e.getError().equals("Некорректный вид МП")).count());
+        System.out.println(errors.stream().distinct().filter(e -> e.getError().equals("Некорректный вид МП")).count());
         //Проверяем загруженое
         System.out.println("Готово");
 
