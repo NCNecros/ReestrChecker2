@@ -69,12 +69,15 @@ public class ControllerHelper {
         helper.readFromP(outdir + File.separator + filelist.get("P")/*, humanMap*/);
         helper.readFromU(outdir + File.separator + filelist.get("U")/*, humanMap*/);
 
-        errorChecker.checkForIncorrectDatN();
+//        errorChecker.checkForIncorrectDatN();
+//
+//        errorChecker.checkForMoreThanOneVisit();
+//
+//        errorChecker.checkForIncorrectVMP();
 
-        errorChecker.checkForMoreThanOneVisit();
-
-        errorChecker.checkForIncorrectVMP();
-
+//        errorChecker.checkForMissedService();
+        errorChecker.checkForCorrectOkatoForStrangers();
+        errorChecker.checkForIncorrectOkato();
         errors.stream().distinct().forEach(System.out::println);
         System.out.println(errors.stream().distinct().filter(e -> e.getError().equals("Некорректный вид МП")).count());
         //Проверяем загруженое

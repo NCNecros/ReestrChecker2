@@ -1,9 +1,8 @@
 package company;
 
 import company.entity.Error;
-import company.entity.NewHuman;
-import company.entity.NewService;
-import company.entity.NewVisit;
+import company.entity.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,6 +25,8 @@ public class ErrorChecker {
     private Map<Double, NewVisit> mapNewVisit;
     @Resource(name = "errorMap")
     private List<Error> errors;
+    @Resource(name = "uslugi307")
+    private Uslugi307List uslugi307List;
 
     public Map<String, NewHuman> getMapNewHuman() {
         return mapNewHuman;
@@ -90,12 +91,48 @@ public class ErrorChecker {
         }
     }
 
-    public void checkForIncorrectDatN(){
+    public void checkForIncorrectDatN() {
         List<NewVisit> visits = new ArrayList<>(mapNewVisit.values());
         for (NewVisit visit : visits) {
             List<Date> datns = visit.getServices().stream().map(NewService::getDatn).collect(Collectors.toList());
             if (!datns.contains(visit.getDatn())) {
                 errors.add(new Error(visit, "нет услуги совпадающей с датой начала"));
+            }
+        }
+    }
+
+    public void checkForMissedService() {
+
+        for (Uslugi307 uslugi307 : uslugi307List.getUslugi()) {
+            checkMissedUslugi(uslugi307.getUslugi(), uslugi307.getObrashenie(), uslugi307.getDoctor());
+        }
+    }
+
+    public void checkForCorrectOkatoForStrangers() {
+        List<NewVisit> visits = mapNewVisit.values().stream().filter(newVisit -> newVisit.getOkatoOms().startsWith("03") && newVisit.getPlOgrn().equals("1022301607393")).collect(Collectors.toList());
+        visits.forEach(newVisit -> errors.add(new Error(newVisit, "краевой в счете для инокраевых")));
+    }
+
+    public void checkForIncorrectOkato() {
+        mapNewVisit.values().stream().filter(newVisit -> newVisit.getOkatoOms().isEmpty() && newVisit.getPlOgrn().equals("1022301607393")).collect(Collectors.toList())
+                .stream().forEach(newVisit1 -> errors.add(new Error(newVisit1, "не указана территория для инокраевого")));
+    }
+
+    public void checkForIncorrectPolisNumber() {
+        mapNewVisit.values().stream().filter(newVisit -> (newVisit.getSpv() == 3 && newVisit.getSpn().length() != 16) || (newVisit.getSpv() == 2 && newVisit.getSpn().length() != 9)).collect(Collectors.toList()).stream().forEach(e -> errors.add(new Error(e, "некорректно заполнен номер полиса")));
+    }
+
+    public void checkForIncorrectPolisType() {
+        mapNewVisit.values().stream().filter(newVisit -> !(newVisit.getSpv() == 3 || newVisit.getSpv() == 2 || newVisit.getSpv() == 1)).collect(Collectors.toList()).stream().forEach(e -> errors.add(new Error(e, "не указан тип полиса")));
+    }
+
+    private void checkMissedUslugi(List<String> uslugi, String obrashenie, String doctor) {
+        for (NewHuman human : mapNewHuman.values()) {
+            for (NewVisit visit : human.getAllVisits().values()) {
+                List<String> services = visit.getServices().stream().map(NewService::getKusl).collect(Collectors.toList());
+                if (services.size() > 1 && (CollectionUtils.containsAny(services, uslugi)) && !services.contains(obrashenie)) {
+                    errors.add(new Error(visit, "отсутствует обращение к врачу" + doctor));
+                }
             }
         }
     }

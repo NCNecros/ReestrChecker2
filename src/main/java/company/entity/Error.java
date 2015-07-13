@@ -55,7 +55,7 @@ public class Error {
 //        if (service != null ? !service.equals(error1.service) : error1.service != null) return false;
 //        if (visit != null ? !visit.equals(error1.visit) : error1.visit != null) return false;
 
-        return this.error.equals(error1.error)&&this.human.equals();
+        return this.error.equals(error1.error)&&this.human.equals(error1.getHuman());
     }
 
     @Override

@@ -3,11 +3,15 @@ package company;
 import company.entity.NewHuman;
 import company.entity.NewService;
 import company.entity.NewVisit;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,6 +50,13 @@ public class AppConfig {
     @Scope(value = "singleton")
     public List<Error> errorMap(){
         return new ArrayList<>();
+    }
+
+    @Bean(name = "uslugi307")
+    public Uslugi307List uslugi307() throws Exception {
+        Reader reader = new FileReader(getClass().getClassLoader().getResource("Uslugi307.xml").getFile());
+        Serializer serializer = new Persister();
+        return serializer.read(Uslugi307List.class, reader);
     }
 }
 
