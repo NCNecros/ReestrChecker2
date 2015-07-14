@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ErrorChecker {
+
     @Resource(name = "mapNewHuman")
     private Map<String, NewHuman> mapNewHuman;
     @Resource(name = "mapNewService")
@@ -60,10 +61,18 @@ public class ErrorChecker {
         this.errors = errors;
     }
 
+
+    /**
+     * Проверка на некорректно заполненное поле ВМП
+     */
     public void checkForIncorrectVMP() {
         mapNewService.values().stream().filter(e -> e.getSpec().equals("1134") && !e.getVmp().equals("12")).forEach(e -> errors.add(new company.entity.Error(e, "Некорректный вид МП")));
     }
 
+    /**
+     * Проверка на ошибку 307, когда человек пришел несколько раз к одному доктору
+     * а его оформили в разные талоны
+     */
     public void checkForMoreThanOneVisit() {
         for (NewHuman human : mapNewHuman.values()) {
             for (NewVisit visit : human.getAllVisits().values()) {
@@ -80,6 +89,9 @@ public class ErrorChecker {
         }
     }
 
+    /**
+     * Проверка на наличие услуг совпадающих с датой окончания лечения
+     */
     public void checkForIncorrectDatO() {
         List<NewVisit> visits = new ArrayList<>(mapNewVisit.values());
         for (NewVisit visit : visits) {
@@ -91,6 +103,9 @@ public class ErrorChecker {
         }
     }
 
+    /**
+     * Проверка на наличие услуг совпадающих с датой начала лечения
+     */
     public void checkForIncorrectDatN() {
         List<NewVisit> visits = new ArrayList<>(mapNewVisit.values());
         for (NewVisit visit : visits) {
@@ -101,6 +116,9 @@ public class ErrorChecker {
         }
     }
 
+    /**
+     * Проверка на отсутствие в талоне необходимых услуг
+     */
     public void checkForMissedService() {
 
         for (Uslugi307 uslugi307 : uslugi307List.getUslugi()) {
@@ -108,23 +126,36 @@ public class ErrorChecker {
         }
     }
 
+    /**
+     * Проверка на наличие краевых пациентов
+     */
     public void checkForCorrectOkatoForStrangers() {
         List<NewVisit> visits = mapNewVisit.values().stream().filter(newVisit -> newVisit.getOkatoOms().startsWith("03") && newVisit.getPlOgrn().equals("1022301607393")).collect(Collectors.toList());
         visits.forEach(newVisit -> errors.add(new Error(newVisit, "краевой в счете для инокраевых")));
     }
 
+    /**
+     * Проверка на наличие территории у инокраевых
+     */
     public void checkForIncorrectOkato() {
         mapNewVisit.values().stream().filter(newVisit -> newVisit.getOkatoOms().isEmpty() && newVisit.getPlOgrn().equals("1022301607393")).collect(Collectors.toList())
                 .stream().forEach(newVisit1 -> errors.add(new Error(newVisit1, "не указана территория для инокраевого")));
     }
 
+    /**
+     * Проверка на правильность номера полиса
+     */
     public void checkForIncorrectPolisNumber() {
         mapNewVisit.values().stream().filter(newVisit -> (newVisit.getSpv() == 3 && newVisit.getSpn().length() != 16) || (newVisit.getSpv() == 2 && newVisit.getSpn().length() != 9)).collect(Collectors.toList()).stream().forEach(e -> errors.add(new Error(e, "некорректно заполнен номер полиса")));
     }
 
+    /**
+     * Проверка на правильность типа полиса
+     */
     public void checkForIncorrectPolisType() {
-        mapNewVisit.values().stream().filter(newVisit -> !(newVisit.getSpv() == 3 || newVisit.getSpv() == 2 || newVisit.getSpv() == 1)).collect(Collectors.toList()).stream().forEach(e -> errors.add(new Error(e, "не указан тип полиса")));
+        mapNewVisit.values().stream().filter(newVisit -> !(newVisit.getSpv() == 3 || newVisit.getSpv() == 2 || newVisit.getSpv() == 1 || newVisit.getSpv() == 4)).collect(Collectors.toList()).stream().forEach(e -> errors.add(new Error(e, "не указан тип полиса")));
     }
+
 
     private void checkMissedUslugi(List<String> uslugi, String obrashenie, String doctor) {
         for (NewHuman human : mapNewHuman.values()) {
@@ -136,5 +167,37 @@ public class ErrorChecker {
             }
         }
     }
+
+    /**
+     * Проверка на лишние услуги
+     */
+    public void checkForReduantService() {
+        for (Uslugi307 uslugi307 : uslugi307List.getUslugi()) {
+            checkForReduantDoctorService(uslugi307.getUslugi(), uslugi307.getObrashenie(), uslugi307.getDoctor());
+        }
+    }
+
+    private void checkForReduantDoctorService(List<String> uslugi, String obrashenie, String doctor) {
+        for (NewHuman human : mapNewHuman.values()) {
+            for (NewVisit visit : human.getAllVisits().values()) {
+                List<String> services = visit.getServices().stream().map(NewService::getKusl).collect(Collectors.toList());
+                if (CollectionUtils.containsAny(services, uslugi) && services.contains(obrashenie) && services.size() == 2) {
+                    errors.add(new Error(visit, "содержит лишнее обращение"));
+                }
+            }
+        }
+    }
+
+    public void checkForIncorrectDocument(){
+        List<NewHuman> incorrectDocuments  = mapNewHuman.values().stream()
+                .filter(
+                        newHuman ->
+                                (newHuman.getcDoc() != null && newHuman.getcDoc() > 0) && (
+                                        newHuman.getsDoc().isEmpty() ||
+                                                newHuman.getnDoc().isEmpty())).collect(Collectors.toList());
+
+        incorrectDocuments.stream().forEach(e -> errors.add(new Error(e, "неправильно заполнена серия или номер документа")));
+    }
+
 
 }

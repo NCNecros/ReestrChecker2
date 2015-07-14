@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,6 +26,7 @@ public class DBFHelper {
     @Resource(name = "mapNewService")
     Map<Double, NewService> mapNewService;
 
+
     private DBFReader dbfReader;
 
     public DBFHelper() {
@@ -32,6 +34,8 @@ public class DBFHelper {
     }
 
     public void readFromP(String filename/*, Map<String, Human> humanMap*/) throws FileNotFoundException, DBFException {
+        mapNewHuman.clear();
+        mapNewVisit.clear();
         Object[] row;
         dbfReader = new DBFReader(new FileInputStream(filename));
         Map<String, Integer> fieldList = new HashMap<>();
@@ -98,6 +102,7 @@ public class DBFHelper {
     }
 
     public void readFromU(String filename/*, Map<String, Human> humanMap*/) throws FileNotFoundException, DBFException {
+        mapNewService.clear();
         Object[] row;
         dbfReader = new DBFReader(new FileInputStream(filename));
         dbfReader.setCharactersetName("cp866");

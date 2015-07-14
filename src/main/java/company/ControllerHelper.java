@@ -7,6 +7,8 @@ import company.entity.Error;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,7 +50,6 @@ public class ControllerHelper {
         this.controller = controller;
     }
 
-    @Transactional
     public void processFile(File file) throws IOException, ZipException {
 
         Path outdir = Files.createTempDirectory("_tmp" + Math.random());
@@ -69,81 +71,84 @@ public class ControllerHelper {
         helper.readFromP(outdir + File.separator + filelist.get("P")/*, humanMap*/);
         helper.readFromU(outdir + File.separator + filelist.get("U")/*, humanMap*/);
 
-//        errorChecker.checkForIncorrectDatN();
-//
-//        errorChecker.checkForMoreThanOneVisit();
-//
-//        errorChecker.checkForIncorrectVMP();
-
-//        errorChecker.checkForMissedService();
+        errors.clear();
+        errorChecker.checkForIncorrectDatN();
+        errorChecker.checkForMoreThanOneVisit();
+        errorChecker.checkForIncorrectVMP();
+        errorChecker.checkForMissedService();
         errorChecker.checkForCorrectOkatoForStrangers();
-        errorChecker.checkForIncorrectOkato();
-        errors.stream().distinct().forEach(System.out::println);
-        System.out.println(errors.stream().distinct().filter(e -> e.getError().equals("Некорректный вид МП")).count());
+        errorChecker.checkForIncorrectPolisNumber();
+        errorChecker.checkForIncorrectPolisType();
+        errorChecker.checkForIncorrectDocument();
+
         //Проверяем загруженое
+        errors.stream().distinct().forEach(System.out::println);
         System.out.println("Готово");
 
 
 //todo починить проверку на ОГРН
-//        String pathToFile = file.getParentFile().getAbsolutePath();
-//        String fileName = file.getName();
-//        saveErrorsToExcel(errors, pathToFile + File.separator + fileName + "_ошибки.xls");
-//        controller.addTextToTextArea(fileName + " проверка завершена");
+        String pathToFile = file.getParentFile().getAbsolutePath();
+        String fileName = file.getName().replace(".zip","");
+        saveErrorsToExcel(errors, pathToFile + File.separator + fileName + "_ошибки.xls");
+        controller.addTextToTextArea(fileName + " проверка завершена");
     }
 
-    //todo починить сохранение. возможно сделать одно сохранение для всех реестров
-//    private void saveErrorsToExcel(List<Error> errors, String filename) {
-//        Workbook wb = new HSSFWorkbook();
-//        Sheet sheet = wb.createSheet("Ошибки");
-//        sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
-//
-//        int counter = 0;
-//        Row row = sheet.createRow(0);
-//        row.createCell(0).setCellValue("Номер карты");
-//        row.createCell(1).setCellValue("ФИО");
-//        row.createCell(2).setCellValue("Дата рождения");
-//        row.createCell(3).setCellValue("Ошибка");
-//        for (Error error : errors.stream()
-//                .distinct()
-//                .sorted((error1, error2) -> error1.getHuman().compareTo(error2.getHuman()))
-//                .collect(Collectors.toList())) {
-//            counter++;
-//            row = sheet.createRow(counter);
-//            try {
-//                row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(error.getHuman().getIsti());
-//            } catch (NullPointerException e) {
-//                row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("");
-//            }
-//            try {
-//                row.createCell(1).setCellValue(error.getHuman().getFullName());
-//            } catch (NullPointerException e) {
-//                row.createCell(1).setCellValue("");
-//            }
-//            try {
-//                row.createCell(2).setCellValue(error.getHuman().getReadableDatr());
-//            } catch (NullPointerException e) {
-//                row.createCell(2).setCellValue("");
-//            }
-//            try {
-//                row.createCell(3).setCellValue("(" + error.getTreatment().getReadableDatN() + ") " + error.getError());
-//            } catch (NullPointerException e) {
-//                if (error.getError() != null) {
-//                    row.createCell(3).setCellValue(error.getError());
-//                } else {
-//                    row.createCell(3).setCellValue("");
-//                }
-//            }
-//        }
-//        try {
-//            FileOutputStream fos = new FileOutputStream(filename);
-//            sheet.autoSizeColumn(0);
-//            sheet.autoSizeColumn(1);
-//            sheet.autoSizeColumn(2);
-//            sheet.autoSizeColumn(3);
-//            wb.write(fos);
-//            fos.close();
-//        } catch (IOException e) {
-//            controller.addTextToTextArea("Ошибка записи файла с ошибками: " + e.getLocalizedMessage());
-//        }
-//    }
+//    todo починить сохранение. возможно сделать одно сохранение для всех реестров
+    private void saveErrorsToExcel(List<Error> errors, String filename) {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("Ошибки");
+        sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
+
+        int counter = 0;
+        Row row = sheet.createRow(0);
+        row.createCell(0).setCellValue("Номер карты");
+        row.createCell(1).setCellValue("ФИО");
+        row.createCell(2).setCellValue("Дата рождения");
+        row.createCell(3).setCellValue("Дата обращения");
+        row.createCell(4).setCellValue("Ошибка");
+        for (Error error : errors.stream()
+                .distinct()
+                .sorted((error1, error2) -> error1.getHuman().compareTo(error2.getHuman()))
+                .collect(Collectors.toList())) {
+            counter++;
+            row = sheet.createRow(counter);
+            try {
+                row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(error.getHuman().getIsti());
+            } catch (NullPointerException e) {
+                row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("");
+            }
+            try {
+                row.createCell(1).setCellValue(error.getHuman().getFullName());
+            } catch (NullPointerException e) {
+                row.createCell(1).setCellValue("");
+            }
+            try {
+                row.createCell(2).setCellValue(error.getHuman().getReadableDatr());
+            } catch (NullPointerException e) {
+                row.createCell(2).setCellValue("");
+            }
+            try {
+                row.createCell(3).setCellValue(error.getVisit().getReadableDatN());
+            } catch (NullPointerException e) {
+                row.createCell(3).setCellValue("");
+            }
+            try {
+                row.createCell(4).setCellValue(error.getError());
+            } catch (NullPointerException e) {
+                row.createCell(4).setCellValue("");
+            }
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(filename);
+            sheet.autoSizeColumn(0);
+            sheet.autoSizeColumn(1);
+            sheet.autoSizeColumn(2);
+            sheet.autoSizeColumn(3);
+            sheet.autoSizeColumn(4);
+            wb.write(fos);
+            fos.close();
+        } catch (IOException e) {
+            controller.addTextToTextArea("Ошибка записи файла с ошибками: " + e.getLocalizedMessage());
+        }
+    }
 }

@@ -1,12 +1,13 @@
 package company.entity;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
  * Created by Necros on 06.07.2015.
  */
-public class NewHuman {
+public class NewHuman implements Comparable {
 
     private Long id;
     //фамилия (Фамилия, имя, отчество записываются полностью буквами русского алфавита. Двойные фамилии, имена, отчества записываются через дефис (-) без пропусков или через один пробел, согласно написанию в предъявленном документе. Допускается использование знаков "-" (двойные фамилии, имена, составные отчества). Ошибочными считаются записи файла, в которых: - имя/фамилия не указаны (варианты заполнения "Нет", "Неизвестно", "Не идентифицирован" и т.п. равносильны пустому значению поля);  - отчество пациента (представителя) не указано, и его отсутствие не подтверждено соответствующим значением признака "Особый случай"; использован один из вариантов заполнения: "Нет", "Неизвестно", "Не идентифицирован", "Без отчества" и т.п., что приравнивается к пустому значению поля.)
@@ -158,4 +159,30 @@ public class NewHuman {
     public void setId(Long id) {
         this.id = id;
     }
+
+    @Override
+    public int compareTo(Object o) {
+        NewHuman otherHuman = (NewHuman) o;
+        int i = fio.compareTo(otherHuman.getFio());
+        if (i!=0) return i;
+
+        i = ima.compareTo(otherHuman.getIma());
+        if (i!=0) return i;
+
+        i = otch.compareTo(otherHuman.getOtch());
+        if (i!=0) return i;
+
+        return datr.compareTo(otherHuman.getDatr());
+
+    }
+
+    public String getFullName() {
+        return fio+" "+ima+" "+otch;
+    }
+
+    public String getReadableDatr() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        return simpleDateFormat.format(datr);
+    }
+
 }

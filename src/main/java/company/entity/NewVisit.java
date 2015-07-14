@@ -1,6 +1,7 @@
 package company.entity;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -390,5 +391,9 @@ public class NewVisit {
         return mkbs.size()>0?mkbs.get(0):"";
     }
 
+    public String getReadableDatN(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        return sdf.format(datn);
+    }
 
 }
