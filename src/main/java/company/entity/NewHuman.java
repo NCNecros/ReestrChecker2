@@ -1,5 +1,9 @@
 package company.entity;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Ordering;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -35,19 +39,27 @@ public class NewHuman implements Comparable {
 
     @Override
     public String toString() {
-        return "NewHuman{" +
-                "fio='" + fio + '\'' +
-                ", ima='" + ima + '\'' +
-                ", otch='" + otch + '\'' +
-                ", pol='" + pol + '\'' +
-                ", datr=" + datr +
-                ", kat='" + kat + '\'' +
-                ", snils='" + snils + '\'' +
-                ", cDoc=" + cDoc +
-                ", sDoc='" + sDoc + '\'' +
-                ", nDoc='" + nDoc + '\'' +
-                ", isti='" + isti + '\'' +
-                '}';
+//        return "NewHuman{" +
+//                "fio='" + fio + '\'' +
+//                ", ima='" + ima + '\'' +
+//                ", otch='" + otch + '\'' +
+//                ", pol='" + pol + '\'' +
+//                ", datr=" + datr +
+//                ", kat='" + kat + '\'' +
+//                ", snils='" + snils + '\'' +
+//                ", cDoc=" + cDoc +
+//                ", sDoc='" + sDoc + '\'' +
+//                ", nDoc='" + nDoc + '\'' +
+//                ", isti='" + isti + '\'' +
+//                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("fio", fio)
+                .add("ima", ima)
+                .add("otch",otch)
+                .add("pol",pol)
+                .add("datr", datr)
+                .add("isti", isti)
+                .toString();
     }
 
     //Визиты
@@ -161,19 +173,13 @@ public class NewHuman implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(Object o){
         NewHuman otherHuman = (NewHuman) o;
-        int i = fio.compareTo(otherHuman.getFio());
-        if (i!=0) return i;
-
-        i = ima.compareTo(otherHuman.getIma());
-        if (i!=0) return i;
-
-        i = otch.compareTo(otherHuman.getOtch());
-        if (i!=0) return i;
-
-        return datr.compareTo(otherHuman.getDatr());
-
+         return ComparisonChain.start()
+                .compare(fio, otherHuman.getFio())
+                .compare(ima, otherHuman.getIma())
+                .compare(otch, otherHuman.getOtch())
+                .compare(datr, otherHuman.getDatr()).result();
     }
 
     public String getFullName() {
@@ -185,4 +191,19 @@ public class NewHuman implements Comparable {
         return simpleDateFormat.format(datr);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(fio, ima, otch, datr);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        NewHuman otherHuman = (NewHuman) obj;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        return Objects.equals(fio, otherHuman.getFio())
+                &&Objects.equals(ima, otherHuman.getIma())
+                &&Objects.equals(otch, otherHuman.getOtch())
+                &&Objects.equals(datr,otherHuman.getDatr());
+    }
 }

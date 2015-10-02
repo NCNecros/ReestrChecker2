@@ -1,9 +1,14 @@
 package company.entity;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ComparisonChain;
+
+import java.util.Objects;
+
 /**
  * Created by Necros on 03.06.2015.
  */
-public class Error {
+public class Error implements Comparable {
     public NewHuman getHuman() {
         return human;
     }
@@ -49,17 +54,14 @@ public class Error {
         if (o == null || getClass() != o.getClass()) return false;
 
         Error error1 = (Error) o;
-
-//        if (!error.equals(error1.error)) return false;
-//        if (!human.equals(error1.human)) return false;
-//        if (service != null ? !service.equals(error1.service) : error1.service != null) return false;
-//        if (visit != null ? !visit.equals(error1.visit) : error1.visit != null) return false;
-
-        return this.error.equals(error1.error)&&this.human.equals(error1.getHuman());
+        return Objects.equals(human,error1.getHuman())
+                && Objects.equals(visit, error1.getVisit())
+                && Objects.equals(error, error1.error);
     }
 
     @Override
     public int hashCode() {
+
         int result = human.hashCode();
         result = 31 * result + (visit != null ? visit.hashCode() : 0);
         result = 31 * result + (service != null ? service.hashCode() : 0);
@@ -69,10 +71,15 @@ public class Error {
 
     @Override
     public String toString() {
-        return "Error{" +
-                "human=" + human +
-                ", visit=" + visit +
-                ", error='" + error + '\'' +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("human",human)
+                .add("visit",visit)
+                .add("error",error).toString();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Error otherError = (Error) o;
+        return ComparisonChain.start().compare(human,otherError.getHuman()).compare(error,otherError.getError()).result();
     }
 }

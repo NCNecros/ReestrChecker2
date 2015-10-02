@@ -1,150 +1,113 @@
 package company.entity;
 
-import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Created by Necros on 06.07.2015.
  */
-@Entity
-@Table(name = "service")
 public class NewService {
     //уникальный номер записи об оказанной медицинской услуге в пределах реестра (Уникальный номер записи об оказанной медицинской услуге используется для идентификации записи о медицинской услуге в пределах реестра, для повторных реестров должен совпадать с первоначальным номером.)
-    @Column
     private Double uid;
 
     //код МО, оказавшей медицинскую помощь SPR01
-    @Column
     private String codeMo;
 
     //номер реестра счетов
-    @Column
     private Double ns;
 
     //номер персонального счета
-    @Column
     private Double sn;
 
     //код отделения (Для услуг, выполненных вне данной МО (IS_OUT = “1”),  все обязательные реквизиты (код отделения, код профиля койки, код диагноза основного, и т.п.) заполняются данными на момент обращения в МО. , Заполняется данными из поля DOC_TABN на основании данных из файла DXXXXX.) SPR07
-    @Column
     private String kotd;
 
     //код профиля койки (Для услуг, выполненных вне данной МО (IS_OUT = “1”),  все обязательные реквизиты (код отделения, код профиля койки, код диагноза основного, и т.п.) заполняются данными на момент обращения в МО. ) Да (для стационаров) SPR08
-    @Column
     private String kpk;
 
     //код диагноза основного заболевания по МКБ–Х (Для услуг, выполненных вне данной МО (IS_OUT = “1”),  все обязательные реквизиты (код отделения, код профиля койки, код диагноза основного, и т.п.) заполняются данными на момент обращения в МО. ) Да (кроме диагностических услуг) SPR20
-    @Column
     private String mkbх;
 
     //код диагноза сопутствующего заболевания по МКБ–Х (Для услуг, выполненных вне данной МО (IS_OUT = “1”),  все обязательные реквизиты (код отделения, код профиля койки, код диагноза основного, и т.п.) заполняются данными на момент обращения в МО. ) SPR20
-    @Column
     private String mkbхs;
 
     //код стандарта оказания медицинской помощи Да (для  нозологий, у которых разработан СОМП) SPR38
-    @Column
     private String kstand;
 
     //код условия оказания медицинской помощи (Для услуг, выполненных вне данной МО (IS_OUT = “1”),  все обязательные реквизиты (код отделения, код профиля койки, код диагноза основного, и т.п.) заполняются данными на момент обращения в МО. ) SPR13
-    @Column
     private String vp;
 
     //код медицинской услуги SPR18
-    @Column
     private String kusl;
 
     //количество услуг
-    @Column
     private Double kolu;
 
     //количество койко-дней (дней лечения) Да (для стационаров всех типов)
-    @Column
     private Double kd;
 
     //дата начала выполнения услуги
-    @Column
     private Date datn;
 
     //дата окончания выполнения услуги
-    @Column
     private Date dato;
 
     //тариф на оплату по ОМС (Тариф на оплату по ОМС состоит из суммы базовой части тарифа услуги по ОМС, тарифа на оплату дополнительных статей расходов и тарифа стимулирующих выплат медицинскому персоналу участковой службы по ОМС.) SPR22
-    @Column
     private Double taru;
 
     //базовая часть тарифа услуги по ОМС  SPR22
-    @Column
     private Double taruB;
 
     //в т.ч. доплата по выполнению СОМП и повышению доступности АПМП SPR22
-    @Column
     private Double taruDm;
 
     //тариф на оплату дополнительных статей расходов по ОМС SPR22
-    @Column
     private Double taruD;
 
     //тариф стимулирующих выплат медицинскому персоналу участковой службы по ОМС SPR22
-    @Column
     private Double taruUc;
 
     //сумма к оплате по ОМС
-    @Column
     private Double summ;
 
     //_B сумма по базовой части тарифа к оплате по ОМС
-    @Column
     private Double summB;
 
     // в т.ч. доплата по выполнению СОМП и повышению доступности АПМП
-    @Column
     private Double summDm;
 
     //сумма дополнительных статей расходов к оплате по ОМС
-    @Column
     private Double summD;
 
     //сумма расходов на оплату коммунальных услуг (Расчетное значение на основании утвержденных справочников SPR22, SPR58, на момент окончания услуги, рассчитывается по формуле: Sk = (T * K)окр * KK, где: T – базовая часть тарифа медицинской услуги по ОМС (SPR22), K – коэффициент для расходов на коммунальные услуги (SPR58),  KK – количество услуг.)
-    @Column
     private Double summK;
 
     //сумма расходов на оплату стимулирующих выплат медицинскому персоналу участковой службы по ОМС (Расчетное значение на основании утвержденных справочников SPR22, SPR66, на момент окончания услуги, рассчитывается по формуле: Sk = (T * K)окр * KK, где: T – базовая часть тарифа медицинской услуги по ОМС (SPR22), K – коэффициент для расходов на стимулирующие выплаты медицинскому персоналу участковой службы (SPR66), KK – количество услуг.)
-    @Column
     private Double summUc;
 
     //признак: услуга оказана в другой МО (Поле содержит значение “1”, если услуга оказана в другом медицинском учреждении, значение “0” в остальных случаях.)
-    @Column
     private Double isOut;
 
     //код МО, оказавшей услугу (Указывается код медицинской организации, выполнившей внешнюю услугу. Заполняется для тех случаев, если IS_OUT = “1”.) SPR01
-    @Column
     private String outMo;
 
     //табельный номер сотрудника, оказавшего услугу (Заполняется данными из поля DOC_TABN на основании данных из файла DXXXXX.) Да (для услуг с тарифом ОМС больше 0, а также для посещений врача стоматолога,  ФАПов и ССМП)
-    @Column
     private String docTabn;
 
     //код специальности специалиста, оказавшего услугу SPR46
-    @Column
     private String spec;
 
     //профиль оказанной медицинской помощи SPR60
-    @Column
     private String profil;
 
     //вид медицинской помощи SPR59
-    @Column
     private String vmp;
 
     //способ оплаты медицинской помощи SPR17
-    @Column
     private String KSO;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "service_id")
     private Long id;
+    private NewVisit visit;
 
     public Double getUid() {
         return uid;
@@ -426,8 +389,52 @@ public class NewService {
         this.visit = visit;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "visit_id")
-    private NewVisit visit;
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid, codeMo, ns, sn, kotd, kpk, mkbх, mkbхs, kstand, vp, kusl, kolu, kd, datn, dato,
+                taru, taruB, taruDm, taruD, taruUc, summ, summB, summDm, summD, summK, summUc, isOut, outMo,
+                docTabn, spec, profil, vmp, KSO, id, visit);
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        NewService other = (NewService) obj;
+        return Objects.equals(codeMo, other.getCodeMo())
+                && Objects.equals(ns, other.getNs())
+                && Objects.equals(sn, other.getSn())
+                && Objects.equals(kotd, other.getKotd())
+                && Objects.equals(kpk, other.getKpk())
+                && Objects.equals(mkbх, other.getMkbх())
+                && Objects.equals(mkbхs, other.getMkbхs())
+                && Objects.equals(kstand, other.getKstand())
+                && Objects.equals(vp, other.getVp())
+                && Objects.equals(kusl, other.getKusl())
+                && Objects.equals(kolu, other.getKolu())
+                && Objects.equals(kd, other.getKd())
+                && Objects.equals(datn, other.getDatn())
+                && Objects.equals(dato, other.getDato())
+                && Objects.equals(taru, other.getTaru())
+                && Objects.equals(taruB, other.getTaruB())
+                && Objects.equals(taruDm, other.getTaruDm())
+                && Objects.equals(taruD, other.getTaruD())
+                && Objects.equals(taruUc, other.getTaruUc())
+                && Objects.equals(summ, other.getSumm())
+                && Objects.equals(summB, other.getSummB())
+                && Objects.equals(summDm, other.getSummDm())
+                && Objects.equals(summD, other.getSummD())
+                && Objects.equals(summK, other.getSummK())
+                && Objects.equals(summUc, other.getSummUc())
+                && Objects.equals(isOut, other.getIsOut())
+                && Objects.equals(outMo, other.getOutMo())
+                && Objects.equals(docTabn, other.getDocTabn())
+                && Objects.equals(spec, other.getSpec())
+                && Objects.equals(profil, other.getProfil())
+                && Objects.equals(vmp, other.getVmp())
+                && Objects.equals(KSO, other.getKSO())
+                && Objects.equals(visit, other.getVisit());
+    }
 }

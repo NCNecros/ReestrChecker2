@@ -6,10 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,6 +25,9 @@ public class ErrorChecker {
     private List<Error> errors;
     @Resource(name = "uslugi307")
     private Uslugi307List uslugi307List;
+    @Resource(name = "mkbSet")
+    private Set<String> mkbSet;
+    private String smo;
 
     public Map<String, NewHuman> getMapNewHuman() {
         return mapNewHuman;
@@ -66,7 +66,7 @@ public class ErrorChecker {
      * Проверка на некорректно заполненное поле ВМП
      */
     public void checkForIncorrectVMP() {
-        mapNewService.values().stream().filter(e -> e.getSpec().equals("1134") && !e.getVmp().equals("12")).forEach(e -> errors.add(new company.entity.Error(e, "Некорректный вид МП")));
+        mapNewService.values().stream().filter(e -> (e.getSpec().equals("1134") || e.getSpec().equals("1122")) && !e.getVmp().equals("12")).forEach(e -> errors.add(new company.entity.Error(e, "Некорректный вид МП")));
     }
 
     /**
@@ -80,9 +80,11 @@ public class ErrorChecker {
                 visitsWithOutCurrent.addAll(human.getAllVisits().values());
                 visitsWithOutCurrent.remove(visit);
                 for (NewVisit otherVisit : visitsWithOutCurrent) {
-                    Boolean res = otherVisit.getMKB().equalsIgnoreCase(visit.getMKB());
+                    // Проверка с разными врачами и одним диагнозом
+                    // Boolean res = otherVisit.getMKB().equalsIgnoreCase(visit.getMKB());
+                    Boolean res = otherVisit.getMKB().equalsIgnoreCase(visit.getMKB()) && otherVisit.getDoctor().equalsIgnoreCase(visit.getDoctor());
                     if (res && visit.getServices().stream().anyMatch(e -> !e.getKusl().startsWith("B04"))) {
-                        errors.add(new Error(visit, " содержит более одного обращения"));
+                        errors.add(new Error(visit, "содержит более одного обращения"));
                     }
                 }
             }
@@ -97,7 +99,7 @@ public class ErrorChecker {
         for (NewVisit visit : visits) {
             List<Date> datos = visit.getServices().stream().map(NewService::getDato).collect(Collectors.toList());
             if (!datos.contains(visit.getDato())) {
-                errors.add(new Error(visit, " нет услуги совпадающей с датой окончания"));
+                errors.add(new Error(visit, "нет услуги совпадающей с датой окончания"));
             }
 
         }
@@ -124,6 +126,14 @@ public class ErrorChecker {
         for (Uslugi307 uslugi307 : uslugi307List.getUslugi()) {
             checkMissedUslugi(uslugi307.getUslugi(), uslugi307.getObrashenie(), uslugi307.getDoctor());
         }
+    }
+
+    /**
+     * Проверка на правильность заполнения результата обращения у профилактических приемов
+     */
+    public void checkForIncorrectIshob() {
+        List<NewVisit> visits = new ArrayList<NewVisit>(mapNewVisit.values().stream().filter(newVisit -> newVisit.getServices().stream().map(newService -> newService.getMkbх()).filter(s -> s.equalsIgnoreCase("Z01.4")).count() > 0).collect(Collectors.toList()));
+        visits.stream().forEach(newVisit -> errors.add(new Error(newVisit, "неправильный исход обращения")));
     }
 
     /**
@@ -162,7 +172,7 @@ public class ErrorChecker {
             for (NewVisit visit : human.getAllVisits().values()) {
                 List<String> services = visit.getServices().stream().map(NewService::getKusl).collect(Collectors.toList());
                 if (services.size() > 1 && (CollectionUtils.containsAny(services, uslugi)) && !services.contains(obrashenie)) {
-                    errors.add(new Error(visit, "отсутствует обращение к врачу" + doctor));
+                    errors.add(new Error(visit, "отсутствует обращение к врач-" + doctor));
                 }
             }
         }
@@ -188,8 +198,8 @@ public class ErrorChecker {
         }
     }
 
-    public void checkForIncorrectDocument(){
-        List<NewHuman> incorrectDocuments  = mapNewHuman.values().stream()
+    public void checkForIncorrectDocument() {
+        List<NewHuman> incorrectDocuments = mapNewHuman.values().stream()
                 .filter(
                         newHuman ->
                                 (newHuman.getcDoc() != null && newHuman.getcDoc() > 0) && (
@@ -199,5 +209,48 @@ public class ErrorChecker {
         incorrectDocuments.stream().forEach(e -> errors.add(new Error(e, "неправильно заполнена серия или номер документа")));
     }
 
+    public void checkInvorrectMKB() {
+        List<NewService> services = getMapNewService().values().stream().filter(newService -> !mkbSet.contains(newService.getMkbх())).collect(Collectors.toList());
+        services.stream().forEach(newService -> errors.add(new Error(newService, "неправильный МКБ")));
+    }
 
+    public void checkReduandOGRN() {
+        for (NewVisit visit : mapNewVisit.values()) {
+            String ogrn = visit.getPlOgrn();
+            switch (getSmo()) {
+                case "1207":
+                    if (ogrn.equalsIgnoreCase("1047100775963")) {
+                        break;
+                    }
+                case "1507":
+                    if (ogrn.equalsIgnoreCase("1027739815245")) {
+                        break;
+                    }
+                case "1807":
+                    if (ogrn.equalsIgnoreCase("1032304935871")) {
+                        break;
+                    }
+                case "4407":
+                    if (ogrn.equalsIgnoreCase("1027806865481")) {
+                        break;
+                    }
+                case "9007":
+                    if (ogrn.equalsIgnoreCase("1022301607393")) {
+                        break;
+                    }
+                default:
+                    errors.add(new Error(visit,"неправильный ОГРН"));
+                    break;
+            }
+        }
+    }
+
+
+    public String getSmo() {
+        return smo;
+    }
+
+    public void setSmo(String smo) {
+        this.smo = smo;
+    }
 }

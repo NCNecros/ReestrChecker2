@@ -10,12 +10,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -57,6 +59,16 @@ public class AppConfig {
         Reader reader = new FileReader(getClass().getClassLoader().getResource("Uslugi307.xml").getFile());
         Serializer serializer = new Persister();
         return serializer.read(Uslugi307List.class, reader);
+    }
+    @Bean(name = "mkbSet")
+    public Set<String> mkbSet(){
+        Set<String> mkbSet = null;
+        try {
+            mkbSet = new HashSet<>(Files.readAllLines(new File(getClass().getClassLoader().getResource("mkb").getFile()).toPath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return mkbSet;
     }
 }
 

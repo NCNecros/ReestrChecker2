@@ -72,6 +72,7 @@ public class ControllerHelper {
         helper.readFromU(outdir + File.separator + filelist.get("U")/*, humanMap*/);
 
         errors.clear();
+        errorChecker.setSmo(file.getName().substring(0,4));
         errorChecker.checkForIncorrectDatN();
         errorChecker.checkForMoreThanOneVisit();
         errorChecker.checkForIncorrectVMP();
@@ -80,6 +81,10 @@ public class ControllerHelper {
         errorChecker.checkForIncorrectPolisNumber();
         errorChecker.checkForIncorrectPolisType();
         errorChecker.checkForIncorrectDocument();
+        errorChecker.checkInvorrectMKB();
+        errorChecker.checkReduandOGRN();
+//        errorChecker.checkForIncorrectIshob();
+
 
         //Проверяем загруженое
         errors.stream().distinct().forEach(System.out::println);
@@ -106,6 +111,10 @@ public class ControllerHelper {
         row.createCell(2).setCellValue("Дата рождения");
         row.createCell(3).setCellValue("Дата обращения");
         row.createCell(4).setCellValue("Ошибка");
+        List<Error> errorList = errors.stream()
+                .sorted()
+                .distinct()
+                .collect(Collectors.toList());
         for (Error error : errors.stream()
                 .distinct()
                 .sorted((error1, error2) -> error1.getHuman().compareTo(error2.getHuman()))

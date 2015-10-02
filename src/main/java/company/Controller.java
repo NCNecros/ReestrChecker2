@@ -45,6 +45,7 @@ public class Controller implements Initializable{
     @FXML
     public void selectFile(ActionEvent actionEvent) throws IOException, ZipException {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File("d:\\Temp\\check"));
         fileChooser.setTitle("Выберите файл счета");
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
@@ -60,6 +61,7 @@ public class Controller implements Initializable{
     public void selectDir(ActionEvent actionEvent) throws IOException, ZipException {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Выберите каталог с файлами");
+        directoryChooser.setInitialDirectory(new File("d:\\Temp\\check"));
         File file = directoryChooser.showDialog(null);
         if (file != null) {
             logger.debug("Выбран каталог {}", file.getName());
