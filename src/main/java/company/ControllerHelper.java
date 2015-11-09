@@ -83,12 +83,13 @@ public class ControllerHelper {
         errorChecker.checkForIncorrectDocument();
         errorChecker.checkInvorrectMKB();
         errorChecker.checkReduandOGRN();
-//        errorChecker.checkForIncorrectIshob();
+        errorChecker.checkForReduantService();
+        errorChecker.checkForIncorrectIshob();
 
 
         //Проверяем загруженое
-        errors.stream().distinct().forEach(System.out::println);
-        System.out.println("Готово");
+//        errors.stream().distinct().forEach(System.out::println);
+//        System.out.println("Готово");
 
 
 //todo починить проверку на ОГРН

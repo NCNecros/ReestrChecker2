@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by Necros on 06.07.2015.
+ * Класс-сущность Посещение
  */
 @Entity
 @Table(name = "visit")
@@ -353,6 +353,11 @@ public class NewVisit {
     public String getMKB() {
         List<String> mkbs = getServices().stream().map(NewService::getMkbх).collect(Collectors.toList());
         return mkbs.size() > 0 ? mkbs.get(0) : "";
+    }
+
+    public void addService(NewService service){
+        services.add(service);
+        service.setVisit(this);
     }
 
     public String getReadableDatN() {

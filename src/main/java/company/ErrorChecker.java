@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by User on 10.07.2015.
+ * Класс проверяющий ошибки.
  */
 @Service
 public class ErrorChecker {
@@ -28,6 +28,9 @@ public class ErrorChecker {
     @Resource(name = "mkbSet")
     private Set<String> mkbSet;
     private String smo;
+
+    public ErrorChecker() {
+    }
 
     public Map<String, NewHuman> getMapNewHuman() {
         return mapNewHuman;
@@ -132,7 +135,7 @@ public class ErrorChecker {
      * Проверка на правильность заполнения результата обращения у профилактических приемов
      */
     public void checkForIncorrectIshob() {
-        List<NewVisit> visits = new ArrayList<NewVisit>(mapNewVisit.values().stream().filter(newVisit -> newVisit.getServices().stream().map(newService -> newService.getMkbх()).filter(s -> s.equalsIgnoreCase("Z01.4")).count() > 0).collect(Collectors.toList()));
+        List<NewVisit> visits = new ArrayList<>(mapNewVisit.values().stream().filter(newVisit -> newVisit.getServices().stream().map(NewService::getMkbх).filter(s -> s.equalsIgnoreCase("Z01.4")).count() > 0).collect(Collectors.toList()));
         visits.stream().forEach(newVisit -> errors.add(new Error(newVisit, "неправильный исход обращения")));
     }
 

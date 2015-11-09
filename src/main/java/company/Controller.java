@@ -30,10 +30,6 @@ import java.util.stream.Collectors;
 public class Controller implements Initializable{
     private static final Logger logger = LoggerFactory.getLogger(Controller.class);
     private ControllerHelper controllerHelper;
-//    @Autowired
-//    private PersonRepository personRepository;
-//    @Autowired
-//    private UslugiRepository uslugiRepository;
 
     @Autowired
     public Controller(ControllerHelper controllerHelper){
