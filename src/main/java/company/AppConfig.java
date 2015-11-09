@@ -48,11 +48,11 @@ public class AppConfig {
         return mapNewService;
     }
 
-    @Bean(name = "errorMap")
-    @Scope(value = "singleton")
-    public List<Error> errorMap(){
-        return new ArrayList<>();
-    }
+//    @Bean(name = "errorMap")
+//    @Scope(value = "singleton")
+//    public List<Error> errorMap(){
+//        return new ArrayList<>();
+//    }
 
     @Bean(name = "uslugi307")
     public Uslugi307List uslugi307() throws Exception {

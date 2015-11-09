@@ -1,8 +1,6 @@
 package company;
 
-import company.entity.NewHuman;
-import company.entity.NewService;
-import company.entity.NewVisit;
+import company.entity.*;
 import company.entity.Error;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -15,7 +13,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,8 +32,8 @@ public class ControllerHelper {
     Map<Double, NewVisit> mapNewVisit;
     @Resource(name = "mapNewService")
     Map<Double, NewService> mapNewService;
-    @Resource(name = "errorMap")
-    List<Error> errors;
+    @Resource(name = "listOfError")
+    ListOfError errors;
     @Resource
     ErrorChecker errorChecker;
     private Controller controller;
@@ -50,11 +47,14 @@ public class ControllerHelper {
         this.controller = controller;
     }
 
+
     public void processFile(File file) throws IOException, ZipException {
 
-        Path outdir = Files.createTempDirectory("_tmp" + Math.random());
-        ZipFile zipFile = new ZipFile(file);
         Map<String, String> filelist = new HashMap<>();
+
+        Path outdir = Files.createTempDirectory("_tmp" + Math.random());
+        // TODO: 10.11.2015 Вынести извлечение файлов в отдельный метод
+        ZipFile zipFile = new ZipFile(file);
         for (Object obj : zipFile.getFileHeaders()) {
             FileHeader header = (FileHeader) obj;
             if (header.getFileName().startsWith("P")) {
@@ -67,40 +67,34 @@ public class ControllerHelper {
             }
         }
 
-        //Загрузка данных
-        helper.readFromP(outdir + File.separator + filelist.get("P")/*, humanMap*/);
-        helper.readFromU(outdir + File.separator + filelist.get("U")/*, humanMap*/);
+
+        helper.readFromP(outdir + File.separator + filelist.get("P"));
+        helper.readFromU(outdir + File.separator + filelist.get("U"));
 
         errors.clear();
         errorChecker.setSmo(file.getName().substring(0,4));
-        errorChecker.checkForIncorrectDatN();
-        errorChecker.checkForMoreThanOneVisit();
-        errorChecker.checkForIncorrectVMP();
-        errorChecker.checkForMissedService();
-        errorChecker.checkForCorrectOkatoForStrangers();
-        errorChecker.checkForIncorrectPolisNumber();
-        errorChecker.checkForIncorrectPolisType();
-        errorChecker.checkForIncorrectDocument();
-        errorChecker.checkInvorrectMKB();
-        errorChecker.checkReduandOGRN();
-        errorChecker.checkForReduantService();
-        errorChecker.checkForIncorrectIshob();
+        errorChecker.checkForIncorrectDatN(mapNewVisit.values());
+        errorChecker.checkForMoreThanOneVisit(new ArrayList<>(mapNewHuman.values()));
+        errorChecker.checkForIncorrectVMP(mapNewService.values());
+        errorChecker.checkForMissedService(mapNewHuman.values());
+        errorChecker.checkForCorrectOkatoForStrangers(mapNewVisit.values());
+        errorChecker.checkForIncorrectPolisNumber(mapNewVisit.values());
+        errorChecker.checkForIncorrectPolisType(mapNewVisit.values());
+        errorChecker.checkForIncorrectDocument(mapNewHuman.values());
+        errorChecker.checkInvorrectMKB(mapNewService.values());
+        errorChecker.checkReduandOGRN(mapNewVisit.values());
+        errorChecker.checkForRedundantService(mapNewHuman.values());
+//        errorChecker.checkForIncorrectIshob(mapNewVisit);
 
 
-        //Проверяем загруженое
-//        errors.stream().distinct().forEach(System.out::println);
-//        System.out.println("Готово");
-
-
-//todo починить проверку на ОГРН
         String pathToFile = file.getParentFile().getAbsolutePath();
         String fileName = file.getName().replace(".zip","");
         saveErrorsToExcel(errors, pathToFile + File.separator + fileName + "_ошибки.xls");
         controller.addTextToTextArea(fileName + " проверка завершена");
     }
 
-//    todo починить сохранение. возможно сделать одно сохранение для всех реестров
-    private void saveErrorsToExcel(List<Error> errors, String filename) {
+//    todo возможно сделать одно сохранение для всех реестров
+    private void saveErrorsToExcel(ListOfError errors, String filename) {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet("Ошибки");
         sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
