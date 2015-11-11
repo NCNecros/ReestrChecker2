@@ -62,7 +62,6 @@ public class ControllerHelper {
                 zipFile.extractFile(header, outdir.toString());
             }
         }
-
     }
 
     private void processDir(File dir) throws IOException, ZipException {
@@ -108,10 +107,9 @@ public class ControllerHelper {
         try {
             saver.saveErrorsToExcel(errors, pathToFile + File.separator + fileName + "_ошибки.xls");
         } catch (IOException e) {
-            controller.addTextToTextArea(e.getMessage());
+            logger.error(e.getMessage());
         }
-
-        controller.addTextToTextArea(fileName + " проверка завершена");
+        logger.info(fileName + " проверка завершена");
     }
 
     private void checkForErrors(File file) {
