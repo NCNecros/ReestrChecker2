@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by Necros on 06.07.2015.
+ * Класс-сущность Человек
  */
 public class NewHuman implements Comparable {
 
@@ -67,6 +67,7 @@ public class NewHuman implements Comparable {
 
     public void addVisit(NewVisit newVisit){
         visits.put(newVisit.getSn(), newVisit);
+        newVisit.setParent(this);
     }
     public void removeVisit(NewVisit newVisit){
         visits.remove(newVisit.getSn());
@@ -199,11 +200,7 @@ public class NewHuman implements Comparable {
     @Override
     public boolean equals(Object obj) {
         NewHuman otherHuman = (NewHuman) obj;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        return !(obj == null || getClass() != obj.getClass()) && Objects.equals(fio, otherHuman.getFio()) && Objects.equals(ima, otherHuman.getIma()) && Objects.equals(otch, otherHuman.getOtch()) && Objects.equals(datr, otherHuman.getDatr());
 
-        return Objects.equals(fio, otherHuman.getFio())
-                &&Objects.equals(ima, otherHuman.getIma())
-                &&Objects.equals(otch, otherHuman.getOtch())
-                &&Objects.equals(datr,otherHuman.getDatr());
     }
 }
