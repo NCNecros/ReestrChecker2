@@ -51,7 +51,7 @@ public class ErrorChecker {
      * Проверка на ошибку 307, когда человек пришел несколько раз к одному доктору
      * а его оформили в разные талоны
      */
-    public void checkForMoreThanOneVisit(List<NewHuman> newHumanList) {
+    public void checkForMoreThanOneVisit(Collection<NewHuman> newHumanList) {
         for (NewHuman human : newHumanList) {
             for (NewVisit visit : human.getAllVisits().values()) {
                 List<NewVisit> visitsWithOutCurrent = new ArrayList<>();

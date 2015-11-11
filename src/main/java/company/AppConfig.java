@@ -26,34 +26,6 @@ import java.util.stream.Collectors;
 @Configuration
 @ComponentScan(basePackages = "company")
 public class AppConfig {
-//todo переделать в отдельный класс с методами и сортировками
-    @Bean(name = "mapNewHuman")
-    @Scope(value = "singleton")
-    public Map<String,NewHuman> mapNewHuman(){
-        Map<String,NewHuman> mapNewHuman = new LinkedHashMap<>();
-        return mapNewHuman;
-    }
-    //todo переделать в отдельный класс с методами и сортировками
-    @Bean(name = "mapNewVisit")
-    @Scope(value = "singleton")
-    public Map<Double,NewVisit> mapNewVisit(){
-        Map<Double,NewVisit> mapNewVisit = new LinkedHashMap<>();
-        return mapNewVisit;
-    }
-    //todo переделать в отдельный класс с методами и сортировками
-    @Bean(name = "mapNewService")
-    @Scope(value = "singleton")
-    public Map<String,NewService> mapNewService(){
-        Map<String,NewService> mapNewService = new LinkedHashMap<>();
-        return mapNewService;
-    }
-
-//    @Bean(name = "errorMap")
-//    @Scope(value = "singleton")
-//    public List<Error> errorMap(){
-//        return new ArrayList<>();
-//    }
-
     @Bean(name = "uslugi307")
     public Uslugi307List uslugi307() throws Exception {
         Reader reader = new FileReader(getClass().getClassLoader().getResource("Uslugi307.xml").getFile());

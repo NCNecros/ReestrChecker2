@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 /**
  * Класс-сущность Посещение
  */
-@Entity
-@Table(name = "visit")
 public class NewVisit {
     Set<NewService> services = new HashSet<>(0);
     private Long id;

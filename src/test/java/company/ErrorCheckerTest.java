@@ -196,7 +196,9 @@ public class ErrorCheckerTest {
         NewService serviceTwo = new NewService();
         visit.addService(serviceTwo);
         serviceOne.setKusl("B01.001.001");
+        serviceOne.setMkbх("Z01.4");
         serviceTwo.setKusl("B01.001.019");
+        serviceTwo.setMkbх("Z01.4");
 
         errorChecker.checkForRedundantService(Arrays.asList(human));
 

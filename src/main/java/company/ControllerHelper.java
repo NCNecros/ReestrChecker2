@@ -26,17 +26,15 @@ import java.util.stream.Collectors;
 public class ControllerHelper {
     @Autowired
     DBFHelper helper;
-    @Resource(name = "mapNewHuman")
-    Map<String, NewHuman> mapNewHuman;
-    @Resource(name = "mapNewVisit")
-    Map<Double, NewVisit> mapNewVisit;
-    @Resource(name = "mapNewService")
-    Map<Double, NewService> mapNewService;
+    @Resource
+    Data data;
     @Resource(name = "listOfError")
     ListOfError errors;
     @Resource
     ErrorChecker errorChecker;
     private Controller controller;
+    @Resource
+    private ExcelSaver saver;
 
     public ControllerHelper() {
     }
@@ -47,112 +45,70 @@ public class ControllerHelper {
         this.controller = controller;
     }
 
-
-    public void processFile(File file) throws IOException, ZipException {
-
-        Map<String, String> filelist = new HashMap<>();
-
+    private void unpackZip(File zipFileName, StringBuffer pFile, StringBuffer uFile) throws IOException, ZipException {
         Path outdir = Files.createTempDirectory("_tmp" + Math.random());
-        // TODO: 10.11.2015 Вынести извлечение файлов в отдельный метод
-        ZipFile zipFile = new ZipFile(file);
+        ZipFile zipFile = new ZipFile(zipFileName);
         for (Object obj : zipFile.getFileHeaders()) {
             FileHeader header = (FileHeader) obj;
             if (header.getFileName().startsWith("P")) {
-                filelist.put("P", header.getFileName());
+                pFile.append(outdir).append(File.separator).append(header.getFileName());
                 zipFile.extractFile(header, outdir.toString());
             }
             if (header.getFileName().startsWith("U")) {
-                filelist.put("U", header.getFileName());
+                uFile.append(outdir).append(File.separator).append(header.getFileName());
                 zipFile.extractFile(header, outdir.toString());
             }
         }
 
+    }
 
-        helper.readFromP(outdir + File.separator + filelist.get("P"));
-        helper.readFromU(outdir + File.separator + filelist.get("U"));
+    public void processFile(File file) throws IOException, ZipException {
 
+        StringBuffer pFile = new StringBuffer();
+        StringBuffer uFile = new StringBuffer();
+
+        unpackZip(file, pFile, uFile);
+
+        helper.readFromP(pFile.toString());
+        helper.readFromU(uFile.toString());
+
+        // TODO: 10.11.2015 Придумать что-то здесь с проверкой. Она должна быть где-то в другом месте
         errors.clear();
-        errorChecker.setSmo(file.getName().substring(0,4));
-        errorChecker.checkForIncorrectDatN(mapNewVisit.values());
-        errorChecker.checkForMoreThanOneVisit(new ArrayList<>(mapNewHuman.values()));
-        errorChecker.checkForIncorrectVMP(mapNewService.values());
-        errorChecker.checkForMissedService(mapNewHuman.values());
-        errorChecker.checkForCorrectOkatoForStrangers(mapNewVisit.values());
-        errorChecker.checkForIncorrectPolisNumber(mapNewVisit.values());
-        errorChecker.checkForIncorrectPolisType(mapNewVisit.values());
-        errorChecker.checkForIncorrectDocument(mapNewHuman.values());
-        errorChecker.checkInvorrectMKB(mapNewService.values());
-        errorChecker.checkReduandOGRN(mapNewVisit.values());
-        errorChecker.checkForRedundantService(mapNewHuman.values());
-//        errorChecker.checkForIncorrectIshob(mapNewVisit);
-
+        checkForErrors(file);
 
         String pathToFile = file.getParentFile().getAbsolutePath();
-        String fileName = file.getName().replace(".zip","");
-        saveErrorsToExcel(errors, pathToFile + File.separator + fileName + "_ошибки.xls");
+        String fileName = file.getName().replace(".zip", "");
+
+        try {
+            saver.saveErrorsToExcel(errors, pathToFile + File.separator + fileName + "_ошибки.xls");
+        } catch (IOException e) {
+            controller.addTextToTextArea(e.getMessage());
+        }
+
         controller.addTextToTextArea(fileName + " проверка завершена");
     }
 
-//    todo возможно сделать одно сохранение для всех реестров
-    private void saveErrorsToExcel(ListOfError errors, String filename) {
-        Workbook wb = new HSSFWorkbook();
-        Sheet sheet = wb.createSheet("Ошибки");
-        sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
+    private void checkForErrors(File file) {
+        errorChecker.setSmo(getSMO(file));
+        errorChecker.checkForIncorrectDatN(data.getVisits());
+        errorChecker.checkForMoreThanOneVisit(data.getHumans());
+        errorChecker.checkForIncorrectVMP(data.getServices());
+        errorChecker.checkForMissedService(data.getHumans());
+        errorChecker.checkForCorrectOkatoForStrangers(data.getVisits());
+        errorChecker.checkForIncorrectPolisNumber(data.getVisits());
+        errorChecker.checkForIncorrectPolisType(data.getVisits());
+        errorChecker.checkForIncorrectDocument(data.getHumans());
+        errorChecker.checkInvorrectMKB(data.getServices());
+        errorChecker.checkReduandOGRN(data.getVisits());
+        errorChecker.checkForRedundantService(data.getHumans());
+        errorChecker.checkForIncorrectIshob(data.getVisits());
+    }
 
-        int counter = 0;
-        Row row = sheet.createRow(0);
-        row.createCell(0).setCellValue("Номер карты");
-        row.createCell(1).setCellValue("ФИО");
-        row.createCell(2).setCellValue("Дата рождения");
-        row.createCell(3).setCellValue("Дата обращения");
-        row.createCell(4).setCellValue("Ошибка");
-        List<Error> errorList = errors.stream()
-                .sorted()
-                .distinct()
-                .collect(Collectors.toList());
-        for (Error error : errors.stream()
-                .distinct()
-                .sorted((error1, error2) -> error1.getHuman().compareTo(error2.getHuman()))
-                .collect(Collectors.toList())) {
-            counter++;
-            row = sheet.createRow(counter);
-            try {
-                row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(error.getHuman().getIsti());
-            } catch (NullPointerException e) {
-                row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("");
-            }
-            try {
-                row.createCell(1).setCellValue(error.getHuman().getFullName());
-            } catch (NullPointerException e) {
-                row.createCell(1).setCellValue("");
-            }
-            try {
-                row.createCell(2).setCellValue(error.getHuman().getReadableDatr());
-            } catch (NullPointerException e) {
-                row.createCell(2).setCellValue("");
-            }
-            try {
-                row.createCell(3).setCellValue(error.getVisit().getReadableDatN());
-            } catch (NullPointerException e) {
-                row.createCell(3).setCellValue("");
-            }
-            try {
-                row.createCell(4).setCellValue(error.getError());
-            } catch (NullPointerException e) {
-                row.createCell(4).setCellValue("");
-            }
-        }
-        try {
-            FileOutputStream fos = new FileOutputStream(filename);
-            sheet.autoSizeColumn(0);
-            sheet.autoSizeColumn(1);
-            sheet.autoSizeColumn(2);
-            sheet.autoSizeColumn(3);
-            sheet.autoSizeColumn(4);
-            wb.write(fos);
-            fos.close();
-        } catch (IOException e) {
-            controller.addTextToTextArea("Ошибка записи файла с ошибками: " + e.getLocalizedMessage());
-        }
+    private String getSMO(File file) {
+        return file.getName().substring(0, 4);
+    }
+
+    public void setSaver(ExcelSaver saver) {
+        this.saver = saver;
     }
 }
