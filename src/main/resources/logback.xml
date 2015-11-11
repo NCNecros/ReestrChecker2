@@ -6,18 +6,18 @@
             </Pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>DEBUG</level>
+            <level>INFO</level>
         </filter>
     </appender>
 
 
     <logger name="org.codingpedia" additivity="false">
-        <level value="DEBUG" />
+        <level value="INFO" />
         <appender-ref ref="consoleAppender" />
     </logger>
 
     <root>
-        <level value="debug" />
+        <level value="info" />
         <appender-ref ref="consoleAppender" />
     </root>
 </configuration>

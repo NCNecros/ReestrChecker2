@@ -46,7 +46,7 @@ public class Controller implements Initializable{
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             logger.debug("Файл выбран"+this.toString());
-            controllerHelper.processFile(file);
+            controllerHelper.process(file);
         }
     }
 
@@ -59,18 +59,7 @@ public class Controller implements Initializable{
         directoryChooser.setTitle("Выберите каталог с файлами");
         directoryChooser.setInitialDirectory(new File("d:\\Temp\\check"));
         File file = directoryChooser.showDialog(null);
-        if (file != null) {
-            logger.debug("Выбран каталог {}", file.getName());
-            List<File> files = Files.list(file.toPath())
-                    .map(Path::toFile)
-                    .filter(c -> (c.getName().endsWith("zip") || c.getName().endsWith("ZIP"))
-                            && (c.getName().startsWith("1207") || c.getName().startsWith("1507") || c.getName().startsWith("4307") || c.getName().startsWith("1807") || c.getName().startsWith("4407") || c.getName().startsWith("9007")))
-                    .collect(Collectors.toList());
-            files.forEach(e-> logger.debug("Найден файл {}", e.getName()));
-            for (File f : files) {
-                controllerHelper.processFile(f);
-            }
-        }
+        controllerHelper.process(file);
     }
 
     @PostConstruct

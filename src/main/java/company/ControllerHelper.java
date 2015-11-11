@@ -7,6 +7,8 @@ import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @Scope(value = "singleton")
 public class ControllerHelper {
+    private static final Logger logger = LoggerFactory.getLogger(ControllerHelper.class);
     @Autowired
     DBFHelper helper;
     @Resource
@@ -62,7 +65,30 @@ public class ControllerHelper {
 
     }
 
-    public void processFile(File file) throws IOException, ZipException {
+    private void processDir(File dir) throws IOException, ZipException {
+        if (dir != null) {
+            logger.debug("Выбран каталог {}", dir.getName());
+            List<File> files = Files.list(dir.toPath())
+                    .map(Path::toFile)
+                    .filter(c -> (c.getName().endsWith("zip") || c.getName().endsWith("ZIP"))
+                            && (c.getName().startsWith("1207") || c.getName().startsWith("1507") || c.getName().startsWith("4307") || c.getName().startsWith("1807") || c.getName().startsWith("4407") || c.getName().startsWith("9007")))
+                    .collect(Collectors.toList());
+            files.forEach(e-> logger.info("Найден файл {}", e.getName()));
+            for (File f : files) {
+                processFile(f);
+            }
+        }
+    }
+
+    public void process(File file) throws IOException, ZipException {
+        if (Files.isDirectory(file.toPath())){
+            processDir(file);
+        }else {
+            processFile(file);
+        }
+    }
+
+    private void processFile(File file) throws IOException, ZipException {
 
         StringBuffer pFile = new StringBuffer();
         StringBuffer uFile = new StringBuffer();

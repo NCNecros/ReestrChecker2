@@ -165,6 +165,11 @@
             <artifactId>yamlbeans</artifactId>
             <version>1.09</version>
         </dependency>
+        <dependency>
+            <groupId>args4j</groupId>
+            <artifactId>args4j</artifactId>
+            <version>2.32</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.name}</finalName>
