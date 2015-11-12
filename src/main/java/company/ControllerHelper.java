@@ -35,17 +35,10 @@ public class ControllerHelper {
     ListOfError errors;
     @Resource
     ErrorChecker errorChecker;
-    private Controller controller;
     @Resource
     private ExcelSaver saver;
 
     public ControllerHelper() {
-    }
-
-    @Autowired
-    @Lazy
-    public ControllerHelper(Controller controller) {
-        this.controller = controller;
     }
 
     private void unpackZip(File zipFileName, StringBuffer pFile, StringBuffer uFile) throws IOException, ZipException {
