@@ -2,6 +2,8 @@ package company;
 
 import company.entity.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.joda.time.LocalDate;
+import org.joda.time.Years;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -111,6 +113,7 @@ public class ErrorChecker {
     /**
      * Проверка на правильность заполнения результата обращения у профилактических приемов
      */
+    // FIXME: 02.12.2015 проверить починить. у женской здесь вываливает кучу ошибок, а страховые находят всего несколько
     public void checkForIncorrectIshob(Collection<NewVisit> visitCollection) {
         List<NewVisit> visits = new ArrayList<>(visitCollection.stream().filter(newVisit -> newVisit.getServices().stream()
                 .map(NewService::getMkbх)
@@ -201,7 +204,7 @@ public class ErrorChecker {
                 if (CollectionUtils.containsAny(services, uslugi) && services.contains(obrashenie) && services.size() == 2) {
                     errors.addError(visit, "содержит лишнее обращение");
                 }
-                if ((visit.getMKB().equalsIgnoreCase("Z34.0")) && ginecologServices.size()>0 && ginecologServices.contains(obrashenie)){
+                if ((visit.getMKB().equalsIgnoreCase("Z34.0")) && ginecologServices.size() > 0 && ginecologServices.contains(obrashenie)) {
                     errors.addError(visit, "содержит лишнее обращение");
                 }
             }
@@ -219,7 +222,7 @@ public class ErrorChecker {
         incorrectDocuments.stream().forEach(e -> errors.addError(e, "неправильно заполнена серия или номер документа"));
     }
 
-    public void checkInvorrectMKB(Collection<NewService> serviceCollection) {
+    public void checkForInсorrectMKB(Collection<NewService> serviceCollection) {
         List<NewService> services = serviceCollection.stream().filter(newService -> !mkbSet.contains(newService.getMkbх())).collect(Collectors.toList());
         services.stream().forEach(newService -> errors.addError(newService, "неправильный МКБ"));
     }
@@ -227,20 +230,32 @@ public class ErrorChecker {
     public void checkReduandOGRN(Collection<NewVisit> visitCollection) {
         for (NewVisit visit : visitCollection) {
             String ogrn = visit.getPlOgrn();
-            if (getSmo().equals("1207") && !ogrn.equals(ALPHA_OGRN)) {
-                errors.addError(visit, "неправильный ОГРН");
-            }
-            if (getSmo().equals("1507") && !ogrn.equals(VTB_OGRN)) {
-                errors.addError(visit, "неправильный ОГРН");
-            }
-            if (getSmo().equals("1807") && !ogrn.equals(MSK_ORGN)) {
-                errors.addError(visit, "неправильный ОГРН");
-            }
-            if (getSmo().equals("4407") && !ogrn.equals(RGS_OGRN)) {
-                errors.addError(visit, "неправильный ОГРН");
-            }
-            if (getSmo().equals("9007") && !ogrn.equals(TFOMS_OGRN)) {
-                errors.addError(visit, "неправильный ОГРН");
+            switch (getSmo()) {
+                case "1207":
+                    if (!ogrn.equals(ALPHA_OGRN)){
+                        errors.addError(visit, "неправильный ОГРН");
+                    }
+                    break;
+                case "1507":
+                    if (!ogrn.equals(VTB_OGRN)) {
+                        errors.addError(visit, "неправильный ОГРН");
+                    }
+                    break;
+                case "4407":
+                    if (!ogrn.equals(RGS_OGRN)) {
+                        errors.addError(visit, "неправильный ОГРН");
+                    }
+                    break;
+                case "1807":
+                    if (!ogrn.equals(MSK_ORGN)) {
+                        errors.addError(visit, "неправильный ОГРН");
+                    }
+                    break;
+                case "9007":
+                    if (!ogrn.equals(TFOMS_OGRN)){
+                        errors.addError(visit, "неправильный ОГРН");
+                    }
+                    break;
             }
 
         }
@@ -253,5 +268,20 @@ public class ErrorChecker {
 
     public void setSmo(String smo) {
         this.smo = smo;
+    }
+
+    public void checkForIncorrectAgeForThisMKBWhenAgeIsIncorrect(Collection<NewService> newServices) {
+        List<String> mkbxList = Arrays.asList("Z00.1", "Z00.2");
+        List<String> listOfUsluga = Arrays.asList("B04.028.003", "B04.031.004");
+
+        for (NewService service : newServices) {
+            Date birthDate = service.getVisit().getParent().getDatr();
+            Date serviceDate = service.getDatn();
+            if (mkbxList.contains(service.getMkbх()) || listOfUsluga.contains(service.getKusl())) {
+                if (Years.yearsBetween(LocalDate.fromDateFields(birthDate), LocalDate.fromDateFields(serviceDate)).getYears() >= 3) {
+                    errors.addError(service, "диагноз не соответствует возрасту");
+                }
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package company;
 
 import company.entity.*;
 import company.entity.Error;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +12,6 @@ import java.util.*;
 
 public class ErrorCheckerTest {
 
-    private List<Error> errors;
     private ErrorChecker errorChecker;
     private ListOfError listOfError;
     private Uslugi307List uslugi307List;
@@ -35,7 +35,7 @@ public class ErrorCheckerTest {
         visit.setDatn(new Date(2015, 1, 2));
         service.setDatn(new Date(2015, 1, 3));
 
-        errorChecker.checkForIncorrectDatN(Collections.singletonList(visit)) ;
+        errorChecker.checkForIncorrectDatN(Collections.singletonList(visit));
 
         verify(listOfError).addError(visit, "нет услуги совпадающей с датой начала");
     }
@@ -255,7 +255,7 @@ public class ErrorCheckerTest {
     }
 
     @Test
-    public void testCheckForIncorrectVisitResult(){
+    public void testCheckForIncorrectVisitResult() {
         NewVisit visit = new NewVisit();
         visit.setIshob("301");
         NewService service = new NewService();
@@ -268,7 +268,7 @@ public class ErrorCheckerTest {
     }
 
     @Test
-    public void testCheckForRedundantVisitForPregnantWomen(){
+    public void testCheckForRedundantVisitForPregnantWomen() {
 
         Uslugi307 uslugi307 = new Uslugi307();
         uslugi307.setDoctor("акушер-гинеколог");
@@ -306,7 +306,7 @@ public class ErrorCheckerTest {
         NewService service = new NewService();
         service.setMkbх("Z99.9");
 
-        errorChecker.checkInvorrectMKB(Arrays.asList(service));
+        errorChecker.checkForInсorrectMKB(Arrays.asList(service));
 
         verify(listOfError, never()).addError(any(NewService.class), anyString());
     }
@@ -318,9 +318,28 @@ public class ErrorCheckerTest {
         NewService service = new NewService();
         service.setMkbх("Z99.9");
 
-        errorChecker.checkInvorrectMKB(Collections.singletonList(service));
+        errorChecker.checkForInсorrectMKB(Collections.singletonList(service));
 
         verify(listOfError).addError(service, "неправильный МКБ");
+    }
+
+    @Test
+    public void testCheckIncorrectAgeForThisMKB() {
+        NewHuman human = new NewHuman();
+        human.setDatr(new LocalDate(2010, 1, 1).toDate());
+        NewVisit visit = new NewVisit();
+        human.addVisit(visit);
+        NewService service = new NewService();
+        visit.addService(service);
+        service.setDatn(new LocalDate(2015, 1, 1).toDate());
+        for (String mkb : Arrays.asList("Z00.2", "Z00.1")) {
+            for (String kusl : Arrays.asList("B04.028.003", "B04.031.004")) {
+                service.setMkbх(mkb);
+                service.setKusl(kusl);
+                errorChecker.checkForIncorrectAgeForThisMKBWhenAgeIsIncorrect(Collections.singletonList(service));
+            }
+        }
+        verify(listOfError, times(4)).addError(service, "диагноз не соответствует возрасту");
     }
 
     @Test
@@ -372,7 +391,16 @@ public class ErrorCheckerTest {
         errorChecker.checkReduandOGRN(Collections.singletonList(visitOne));
 
         verify(listOfError, times(5)).addError(visitOne, "неправильный ОГРН");
+    }
 
+    @Test
+    public void testCheckRedundantORGNWhenItIsCorrect() {
+        NewVisit visit = new NewVisit();
+        errorChecker.setSmo("1207");
+        visit.setPlOgrn(ErrorChecker.ALPHA_OGRN);
+        errorChecker.checkReduandOGRN(Collections.singletonList(visit));
+
+        verify(listOfError, never()).addError(visit, "неправильный ОГРН");
     }
 
     @Test

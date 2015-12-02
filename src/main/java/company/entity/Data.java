@@ -58,6 +58,8 @@ public class Data {
 
     public void clear(){
         mapNewHuman.clear();
+        serviceMap.clear();
+        visitMap.clear();
     }
 
     public boolean containsVisit(Double sn){

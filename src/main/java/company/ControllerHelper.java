@@ -1,22 +1,17 @@
 package company;
 
 import company.entity.*;
-import company.entity.Error;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,7 +76,6 @@ public class ControllerHelper {
     }
 
     private void processFile(File file) throws IOException, ZipException {
-
         StringBuffer pFile = new StringBuffer();
         StringBuffer uFile = new StringBuffer();
 
@@ -107,18 +101,21 @@ public class ControllerHelper {
 
     private void checkForErrors(File file) {
         errorChecker.setSmo(getSMO(file));
+        errorChecker.checkForIncorrectAgeForThisMKBWhenAgeIsIncorrect(data.getServices());
         errorChecker.checkForIncorrectDatN(data.getVisits());
-        errorChecker.checkForMoreThanOneVisit(data.getHumans());
-        errorChecker.checkForIncorrectVMP(data.getServices());
-        errorChecker.checkForMissedService(data.getHumans());
-        errorChecker.checkForCorrectOkatoForStrangers(data.getVisits());
+        errorChecker.checkForIncorrectDatO(data.getVisits());
+        errorChecker.checkForIncorrectDocument(data.getHumans());
+//        errorChecker.checkForIncorrectIshob(data.getVisits());
+        errorChecker.checkForInсorrectMKB(data.getServices());
+        errorChecker.checkForIncorrectOkato(data.getVisits());
         errorChecker.checkForIncorrectPolisNumber(data.getVisits());
         errorChecker.checkForIncorrectPolisType(data.getVisits());
-        errorChecker.checkForIncorrectDocument(data.getHumans());
-        errorChecker.checkInvorrectMKB(data.getServices());
-        errorChecker.checkReduandOGRN(data.getVisits());
+        errorChecker.checkForIncorrectVMP(data.getServices());
+        errorChecker.checkForMoreThanOneVisit(data.getHumans());
+        errorChecker.checkForMissedService(data.getHumans());
+        errorChecker.checkForCorrectOkatoForStrangers(data.getVisits());
         errorChecker.checkForRedundantService(data.getHumans());
-        errorChecker.checkForIncorrectIshob(data.getVisits());
+        errorChecker.checkReduandOGRN(data.getVisits());
     }
 
     private String getSMO(File file) {
