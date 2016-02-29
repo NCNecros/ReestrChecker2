@@ -1,7 +1,6 @@
 package company;
 
 import company.entity.*;
-import company.entity.Error;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
@@ -323,24 +322,7 @@ public class ErrorCheckerTest {
         verify(listOfError).addError(service, "неправильный МКБ");
     }
 
-    @Test
-    public void testCheckIncorrectAgeForThisMKB() {
-        NewHuman human = new NewHuman();
-        human.setDatr(new LocalDate(2010, 1, 1).toDate());
-        NewVisit visit = new NewVisit();
-        human.addVisit(visit);
-        NewService service = new NewService();
-        visit.addService(service);
-        service.setDatn(new LocalDate(2015, 1, 1).toDate());
-        for (String mkb : Arrays.asList("Z00.2", "Z00.1")) {
-            for (String kusl : Arrays.asList("B04.028.003", "B04.031.004")) {
-                service.setMkbх(mkb);
-                service.setKusl(kusl);
-                errorChecker.checkForIncorrectAgeForThisMKBWhenAgeIsIncorrect(Collections.singletonList(service));
-            }
-        }
-        verify(listOfError, times(4)).addError(service, "диагноз не соответствует возрасту");
-    }
+
 
     @Test
     public void testCheckForMoreThanOneVisitWhenMKBIsSameAndKuslIsProfilactic() {

@@ -101,21 +101,20 @@ public class ControllerHelper {
 
     private void checkForErrors(File file) {
         errorChecker.setSmo(getSMO(file));
-        errorChecker.checkForIncorrectAgeForThisMKBWhenAgeIsIncorrect(data.getServices());
-        errorChecker.checkForIncorrectDatN(data.getVisits());
-        errorChecker.checkForIncorrectDatO(data.getVisits());
+//        errorChecker.checkForIncorrectDatN(data.getVisits());
+//        errorChecker.checkForIncorrectDatO(data.getVisits());
         errorChecker.checkForIncorrectDocument(data.getHumans());
 //        errorChecker.checkForIncorrectIshob(data.getVisits());
-        errorChecker.checkForInсorrectMKB(data.getServices());
-        errorChecker.checkForIncorrectOkato(data.getVisits());
+//        errorChecker.checkForInсorrectMKB(data.getServices());
+//        errorChecker.checkForIncorrectOkato(data.getVisits());
         errorChecker.checkForIncorrectPolisNumber(data.getVisits());
         errorChecker.checkForIncorrectPolisType(data.getVisits());
-        errorChecker.checkForIncorrectVMP(data.getServices());
+//        errorChecker.checkForIncorrectVMP(data.getServices());
         errorChecker.checkForMoreThanOneVisit(data.getHumans());
         errorChecker.checkForMissedService(data.getHumans());
-        errorChecker.checkForCorrectOkatoForStrangers(data.getVisits());
+//        errorChecker.checkForCorrectOkatoForStrangers(data.getVisits());
         errorChecker.checkForRedundantService(data.getHumans());
-        errorChecker.checkReduandOGRN(data.getVisits());
+//        errorChecker.checkReduandOGRN(data.getVisits());
     }
 
     private String getSMO(File file) {

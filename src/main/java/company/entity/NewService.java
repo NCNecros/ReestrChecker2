@@ -52,35 +52,9 @@ public class NewService {
     //тариф на оплату по ОМС (Тариф на оплату по ОМС состоит из суммы базовой части тарифа услуги по ОМС, тарифа на оплату дополнительных статей расходов и тарифа стимулирующих выплат медицинскому персоналу участковой службы по ОМС.) SPR22
     private Double taru;
 
-    //базовая часть тарифа услуги по ОМС  SPR22
-    private Double taruB;
-
-    //в т.ч. доплата по выполнению СОМП и повышению доступности АПМП SPR22
-    private Double taruDm;
-
-    //тариф на оплату дополнительных статей расходов по ОМС SPR22
-    private Double taruD;
-
-    //тариф стимулирующих выплат медицинскому персоналу участковой службы по ОМС SPR22
-    private Double taruUc;
 
     //сумма к оплате по ОМС
     private Double summ;
-
-    //_B сумма по базовой части тарифа к оплате по ОМС
-    private Double summB;
-
-    // в т.ч. доплата по выполнению СОМП и повышению доступности АПМП
-    private Double summDm;
-
-    //сумма дополнительных статей расходов к оплате по ОМС
-    private Double summD;
-
-    //сумма расходов на оплату коммунальных услуг (Расчетное значение на основании утвержденных справочников SPR22, SPR58, на момент окончания услуги, рассчитывается по формуле: Sk = (T * K)окр * KK, где: T – базовая часть тарифа медицинской услуги по ОМС (SPR22), K – коэффициент для расходов на коммунальные услуги (SPR58),  KK – количество услуг.)
-    private Double summK;
-
-    //сумма расходов на оплату стимулирующих выплат медицинскому персоналу участковой службы по ОМС (Расчетное значение на основании утвержденных справочников SPR22, SPR66, на момент окончания услуги, рассчитывается по формуле: Sk = (T * K)окр * KK, где: T – базовая часть тарифа медицинской услуги по ОМС (SPR22), K – коэффициент для расходов на стимулирующие выплаты медицинскому персоналу участковой службы (SPR66), KK – количество услуг.)
-    private Double summUc;
 
     //признак: услуга оказана в другой МО (Поле содержит значение “1”, если услуга оказана в другом медицинском учреждении, значение “0” в остальных случаях.)
     private Double isOut;
@@ -234,37 +208,6 @@ public class NewService {
         this.taru = taru;
     }
 
-    public Double getTaruB() {
-        return taruB;
-    }
-
-    public void setTaruB(Double taruB) {
-        this.taruB = taruB;
-    }
-
-    public Double getTaruDm() {
-        return taruDm;
-    }
-
-    public void setTaruDm(Double taruDm) {
-        this.taruDm = taruDm;
-    }
-
-    public Double getTaruD() {
-        return taruD;
-    }
-
-    public void setTaruD(Double taruD) {
-        this.taruD = taruD;
-    }
-
-    public Double getTaruUc() {
-        return taruUc;
-    }
-
-    public void setTaruUc(Double taruUc) {
-        this.taruUc = taruUc;
-    }
 
     public Double getSumm() {
         return summ;
@@ -272,46 +215,6 @@ public class NewService {
 
     public void setSumm(Double summ) {
         this.summ = summ;
-    }
-
-    public Double getSummB() {
-        return summB;
-    }
-
-    public void setSummB(Double summB) {
-        this.summB = summB;
-    }
-
-    public Double getSummDm() {
-        return summDm;
-    }
-
-    public void setSummDm(Double summDm) {
-        this.summDm = summDm;
-    }
-
-    public Double getSummD() {
-        return summD;
-    }
-
-    public void setSummD(Double summD) {
-        this.summD = summD;
-    }
-
-    public Double getSummK() {
-        return summK;
-    }
-
-    public void setSummK(Double summK) {
-        this.summK = summK;
-    }
-
-    public Double getSummUc() {
-        return summUc;
-    }
-
-    public void setSummUc(Double summUc) {
-        this.summUc = summUc;
     }
 
     public Double getIsOut() {
@@ -389,7 +292,7 @@ public class NewService {
     @Override
     public int hashCode() {
         return Objects.hash(uid, codeMo, ns, sn, kotd, kpk, mkbх, mkbхs, kstand, vp, kusl, kolu, kd, datn, dato,
-                taru, taruB, taruDm, taruD, taruUc, summ, summB, summDm, summD, summK, summUc, isOut, outMo,
+                taru,  summ, isOut, outMo,
                 docTabn, spec, profil, vmp, KSO, id, visit);
     }
 
@@ -415,16 +318,7 @@ public class NewService {
                 && Objects.equals(datn, other.getDatn())
                 && Objects.equals(dato, other.getDato())
                 && Objects.equals(taru, other.getTaru())
-                && Objects.equals(taruB, other.getTaruB())
-                && Objects.equals(taruDm, other.getTaruDm())
-                && Objects.equals(taruD, other.getTaruD())
-                && Objects.equals(taruUc, other.getTaruUc())
                 && Objects.equals(summ, other.getSumm())
-                && Objects.equals(summB, other.getSummB())
-                && Objects.equals(summDm, other.getSummDm())
-                && Objects.equals(summD, other.getSummD())
-                && Objects.equals(summK, other.getSummK())
-                && Objects.equals(summUc, other.getSummUc())
                 && Objects.equals(isOut, other.getIsOut())
                 && Objects.equals(outMo, other.getOutMo())
                 && Objects.equals(docTabn, other.getDocTabn())

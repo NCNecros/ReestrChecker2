@@ -3,7 +3,9 @@ package company;
 import company.entity.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.joda.time.LocalDate;
+import org.joda.time.Months;
 import org.joda.time.Years;
+import org.junit.Test;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -157,6 +159,8 @@ public class ErrorChecker {
 
     }
 
+
+
     /**
      * Проверка на правильность типа полиса
      *
@@ -232,7 +236,7 @@ public class ErrorChecker {
             String ogrn = visit.getPlOgrn();
             switch (getSmo()) {
                 case "1207":
-                    if (!ogrn.equals(ALPHA_OGRN)){
+                    if (!ogrn.equals(ALPHA_OGRN)) {
                         errors.addError(visit, "неправильный ОГРН");
                     }
                     break;
@@ -252,7 +256,7 @@ public class ErrorChecker {
                     }
                     break;
                 case "9007":
-                    if (!ogrn.equals(TFOMS_OGRN)){
+                    if (!ogrn.equals(TFOMS_OGRN)) {
                         errors.addError(visit, "неправильный ОГРН");
                     }
                     break;
@@ -270,18 +274,17 @@ public class ErrorChecker {
         this.smo = smo;
     }
 
-    public void checkForIncorrectAgeForThisMKBWhenAgeIsIncorrect(Collection<NewService> newServices) {
-        List<String> mkbxList = Arrays.asList("Z00.1", "Z00.2");
-        List<String> listOfUsluga = Arrays.asList("B04.028.003", "B04.031.004");
-
-        for (NewService service : newServices) {
-            Date birthDate = service.getVisit().getParent().getDatr();
-            Date serviceDate = service.getDatn();
-            if (mkbxList.contains(service.getMkbх()) || listOfUsluga.contains(service.getKusl())) {
-                if (Years.yearsBetween(LocalDate.fromDateFields(birthDate), LocalDate.fromDateFields(serviceDate)).getYears() >= 3) {
-                    errors.addError(service, "диагноз не соответствует возрасту");
-                }
-            }
+        private String getMKBByMonth(int months){
+        String m = "";
+        if (months >= 0 && months <= 47){
+            m="Z00.1";
         }
+        if (months >= 48 && months <= 143){
+            m="Z00.2";
+        }
+        if (months >= 144 && months <= 216){
+            m="Z00.3";
+        }
+        return m;
     }
 }

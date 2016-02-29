@@ -54,8 +54,9 @@ public class Error implements Comparable {
         if (o == null || getClass() != o.getClass()) return false;
 
         Error error1 = (Error) o;
-        return Objects.equals(human,error1.getHuman())
-                && Objects.equals(visit, error1.getVisit())
+        return Objects.equals(human.getFullName(),error1.getHuman().getFullName())
+                && Objects.equals(human.getReadableDatr(), error1.getHuman().getReadableDatr())
+                && Objects.equals(visit.getReadableDatN(), error1.visit.getReadableDatN())
                 && Objects.equals(error, error1.error);
     }
 
@@ -63,8 +64,9 @@ public class Error implements Comparable {
     public int hashCode() {
 
         int result = human.hashCode();
-        result = 31 * result + (visit != null ? visit.hashCode() : 0);
-        result = 31 * result + (service != null ? service.hashCode() : 0);
+        result = 31 * result + (human != null ? human.getIsti().hashCode() : 0);
+        result = 31 * result + (human != null ? human.getFullName().hashCode() : 0);
+        result = 31 * result + (visit != null ? visit.getReadableDatN().hashCode() : 0);
         result = 31 * result + error.hashCode();
         return result;
     }

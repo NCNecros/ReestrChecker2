@@ -44,7 +44,6 @@ public class EntityFactory {
         visit.setOtp(((String) row[fieldList.get("OTP")]).trim());
         visit.setPolp(((String) row[fieldList.get("POLP")]).trim());
         visit.setDatrp((Date) row[fieldList.get("DATRP")]);
-        visit.setKsmo(((String) row[fieldList.get("KSMO")]).trim());
         visit.setNaprMo(((String) row[fieldList.get("NAPR_MO")]).trim());
         visit.setNaprN(((String) row[fieldList.get("NAPR_N")]).trim());
         visit.setDatn((Date) row[fieldList.get("DATN")]);
@@ -76,16 +75,7 @@ public class EntityFactory {
         service.setDatn(((Date) row[fieldList.get("DATN")]));
         service.setDato(((Date) row[fieldList.get("DATO")]));
         service.setTaru(((Double) row[fieldList.get("TARU")]));
-        service.setTaruB(((Double) row[fieldList.get("TARU_B")]));
-        service.setTaruDm(((Double) row[fieldList.get("TARU_DM")]));
-        service.setTaruD(((Double) row[fieldList.get("TARU_D")]));
-        service.setTaruUc(((Double) row[fieldList.get("TARU_UC")]));
         service.setSumm(((Double) row[fieldList.get("SUMM")]));
-        service.setSummB(((Double) row[fieldList.get("SUMM_B")]));
-        service.setSummDm(((Double) row[fieldList.get("SUMM_DM")]));
-        service.setSummD(((Double) row[fieldList.get("SUMM_D")]));
-        service.setSummK(((Double) row[fieldList.get("SUMM_K")]));
-        service.setSummUc(((Double) row[fieldList.get("SUMM_UC")]));
         service.setIsOut(((Double) row[fieldList.get("IS_OUT")]));
         service.setOutMo(((String) row[fieldList.get("OUT_MO")]).trim());
         service.setDocTabn(((String) row[fieldList.get("DOC_TABN")]).trim());
