@@ -3,9 +3,7 @@ package company;
 import company.entity.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.joda.time.LocalDate;
-import org.joda.time.Months;
 import org.joda.time.Years;
-import org.junit.Test;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,12 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class ErrorChecker {
 
-    static String TFOMS_OGRN = "1022301607393";
-    static String ALPHA_OGRN = "1047100775963";
-    static String VTB_OGRN = "1027739815245";
-    static String MSK_ORGN = "1032304935871";
-    static String RGS_OGRN = "1027806865481";
-
+    static final String TFOMS_OGRN = "1022301607393";
+    static final String ALPHA_OGRN = "1047100775963";
+    static final String VTB_OGRN = "1027739815245";
+    static final String MSK_ORGN = "1032304935871";
+    static final String RGS_OGRN = "1027806865481";
 
     @Resource(name = "listOfError")
     private ListOfError errors;
@@ -160,7 +157,6 @@ public class ErrorChecker {
     }
 
 
-
     /**
      * Проверка на правильность типа полиса
      *
@@ -215,7 +211,129 @@ public class ErrorChecker {
         }
     }
 
-    public void checkForIncorrectDocument(Collection<NewHuman> humanCollection) {
+    public void checkForIncorrectUslugaSpecialnost(Collection<NewService> services) {
+        Map<String, List<String>> listOfSpec = getListOfSpec();
+        for (NewService service : services) {
+            if (listOfSpec.containsKey(service.getKusl())) {
+                if (!listOfSpec.get(service.getKusl()).contains(service.getSpec()) && !service.getSpec().isEmpty()) {
+                    if (service.getDato().before(new LocalDate(2016, 1, 31).toDate())) {
+                        errors.addError(service, service.getUid() + "специальность д.б." + listOfSpec.get(service.getKusl()).get(0));
+                    } else {
+                        errors.addError(service, service.getUid() + "специальность д.б." + listOfSpec.get(service.getKusl()).get(1));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Проверка на отсутствующий МКБ при проставленом исполнителе.
+     *
+     * @param services
+     */
+    public void checkForIncorrectMKBAtDispan(Collection<NewService> services) {
+        for (NewService service : services) {
+            if (!service.getSpec().isEmpty() && service.getMkbх().isEmpty() && !service.getKusl().equals("A06.09.006") && service.getKusl().startsWith("B04.047")) {
+                errors.addError(service, "отсутствует МКБ");
+            }
+        }
+    }
+
+    /**
+     * Проверка на неправильные даты услуг в диспансеризации
+     *
+     * @param visits
+     */
+    public void checkForIncorrectDateForUslugaDispan(Collection<NewVisit> visits) {
+        for (NewVisit visit : visits) {
+            if (visit.getServices().stream().filter(e -> e.getKusl().equalsIgnoreCase("A01.30.009")).count() > 0) {
+                NewService serviceA = visit.getServices().stream().filter(e -> e.getKusl().equalsIgnoreCase("A01.30.009")).findFirst().get();
+                for (NewService service : visit.getServices()) {
+                    if (!service.getDocTabn().isEmpty() && service.getDatn().before(serviceA.getDato())) {
+                        errors.addError(visit, "содержит услугу раньше анкетирования");
+                    }
+                }
+            }
+            if (visit.getqG().equals("6")) {
+                if (visit.getServices().stream().filter(e -> !e.getDocTabn().isEmpty()).map(NewService::getDatn).distinct().count() > 1) {
+                    errors.addError(visit, "даты услуг отличаются");
+                }
+            }
+        }
+    }
+
+    /**
+     * Проверка на соответсвие возраста пациента и специальности врача
+     *
+     * @param services
+     */
+    public void checkForIncorrectSpecForChildrenStac(Collection<NewService> services) {
+        for (NewService service : services) {
+            LocalDate now = new LocalDate(service.getVisit().getDatps());
+            LocalDate birthDate = new LocalDate(service.getVisit().getParent().getDatr());
+            Years years = Years.yearsBetween(birthDate, now);
+            if (years.getYears() < 18) {
+                if (service.getKusl().startsWith("G10.2716")) {
+                    if (!service.getSpec().equals("1134") && !service.getSpec().equalsIgnoreCase("22")) {
+                        errors.addError(service, "(" + service.getUid().intValue() + ") специальность не соответствует возрасту д.б. педиатрия(22|68)");
+                    }
+                }
+                if (service.getKusl().startsWith("G10.3116")) {
+                    if (!service.getSpec().equals("1134") && !(service.getSpec().equalsIgnoreCase("11") || service.getSpec().equalsIgnoreCase("28"))) {
+                        errors.addError(service, "(" + service.getUid().intValue() + ") специальность не соответствует возрасту д.б. хирургия(11|20)");
+                    }
+                }
+            }
+        }
+    }
+
+    private Map<String, List<String>> getListOfSpec() {
+        Map<String, List<String>> listOfSpec = new HashMap<>();
+        listOfSpec.put("A01.30.009", Arrays.asList("1122", "27"));
+        listOfSpec.put("A02.12.002", Arrays.asList("1122", "27"));
+        listOfSpec.put("A04.15.001", Arrays.asList("112211", "129"));
+        listOfSpec.put("A04.20.001", Arrays.asList("112211", "129"));
+        listOfSpec.put("A04.21.001", Arrays.asList("112211", "129"));
+        listOfSpec.put("A04.28.002.001", Arrays.asList("112211", "129"));
+        listOfSpec.put("A05.10.002.003", Arrays.asList("112212", "131"));
+        listOfSpec.put("A06.09.006", Arrays.asList("1118", "24"));
+        listOfSpec.put("A06.09.006.001", Arrays.asList("1118", "24"));
+        listOfSpec.put("A06.20.004", Arrays.asList("1118", "24"));
+        listOfSpec.put("A09.05.023.007", Arrays.asList("1107", "13"));
+        listOfSpec.put("A09.05.024", Arrays.asList("1107", "13"));
+        listOfSpec.put("A09.05.026.005", Arrays.asList("1107", "13"));
+        listOfSpec.put("A09.19.001", Arrays.asList("2012", "13"));
+        listOfSpec.put("A12.26.005", Arrays.asList("1122", "20"));
+        listOfSpec.put("B03.016.002", Arrays.asList("1702", "189"));
+        listOfSpec.put("B03.016.003", Arrays.asList("1702", "189"));
+        listOfSpec.put("B03.016.004", Arrays.asList("1107", "189"));
+        listOfSpec.put("B03.016.006", Arrays.asList("1702", "189"));
+        listOfSpec.put("B03.069.003", Arrays.asList("1122", "118"));
+        listOfSpec.put("B04.001.009", Arrays.asList("2003", "8"));
+        listOfSpec.put("B04.015.007", Arrays.asList("1122", "118"));
+        listOfSpec.put("B04.015.008", Arrays.asList("1122", "118"));
+        listOfSpec.put("B04.047.001.01", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.02", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.03", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.04", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.05", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.06", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.07", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.08", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.09", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.10", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.11", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.12", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.61", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.62", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.63", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.64", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.65", Arrays.asList("1122", "27"));
+        listOfSpec.put("B04.047.001.66", Arrays.asList("1122", "27"));
+        return listOfSpec;
+    }
+
+    void checkForIncorrectDocument(Collection<NewHuman> humanCollection) {
         List<NewHuman> incorrectDocuments = humanCollection.stream()
                 .filter(
                         newHuman ->
@@ -226,12 +344,12 @@ public class ErrorChecker {
         incorrectDocuments.stream().forEach(e -> errors.addError(e, "неправильно заполнена серия или номер документа"));
     }
 
-    public void checkForInсorrectMKB(Collection<NewService> serviceCollection) {
+    void checkForInсorrectMKB(Collection<NewService> serviceCollection) {
         List<NewService> services = serviceCollection.stream().filter(newService -> !mkbSet.contains(newService.getMkbх())).collect(Collectors.toList());
         services.stream().forEach(newService -> errors.addError(newService, "неправильный МКБ"));
     }
 
-    public void checkReduandOGRN(Collection<NewVisit> visitCollection) {
+    void checkReduandOGRN(Collection<NewVisit> visitCollection) {
         for (NewVisit visit : visitCollection) {
             String ogrn = visit.getPlOgrn();
             switch (getSmo()) {
@@ -266,24 +384,24 @@ public class ErrorChecker {
     }
 
 
-    public String getSmo() {
+    private String getSmo() {
         return smo;
     }
 
-    public void setSmo(String smo) {
+    void setSmo(String smo) {
         this.smo = smo;
     }
 
-        private String getMKBByMonth(int months){
+    private String getMKBByMonth(int months) {
         String m = "";
-        if (months >= 0 && months <= 47){
-            m="Z00.1";
+        if (months >= 0 && months <= 47) {
+            m = "Z00.1";
         }
-        if (months >= 48 && months <= 143){
-            m="Z00.2";
+        if (months >= 48 && months <= 143) {
+            m = "Z00.2";
         }
-        if (months >= 144 && months <= 216){
-            m="Z00.3";
+        if (months >= 144 && months <= 216) {
+            m = "Z00.3";
         }
         return m;
     }

@@ -30,7 +30,8 @@ public class ExcelSaver {
         row.createCell(4).setCellValue("Ошибка");
         for (Error error : errors.stream()
                 .distinct()
-                .sorted((error1, error2) -> error1.getHuman().compareTo(error2.getHuman()))
+//                .sorted((error1, error2) -> error1.getHuman().compareTo(error2.getHuman()))
+                .sorted((error1, error2) -> getSnFromString(error1.getError()).compareTo(getSnFromString(error2.getError())))
                 .collect(Collectors.toList())) {
             counter++;
             row = sheet.createRow(counter);
@@ -72,6 +73,12 @@ public class ExcelSaver {
         } catch (IOException e) {
             throw new IOException("Ошибка записи файла с ошибками: " + e.getLocalizedMessage());
         }
+    }
+
+    private Integer getSnFromString(String string) {
+        Integer result = Integer.parseInt(string.split("[()]")[1]);
+        return result;
+
     }
 
 }

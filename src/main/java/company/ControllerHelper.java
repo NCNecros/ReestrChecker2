@@ -1,6 +1,7 @@
 package company;
 
-import company.entity.*;
+import company.entity.Data;
+import company.entity.ListOfError;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
@@ -15,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,7 +85,6 @@ public class ControllerHelper {
         helper.readFromP(pFile.toString());
         helper.readFromU(uFile.toString());
 
-        // TODO: 10.11.2015 Придумать что-то здесь с проверкой. Она должна быть где-то в другом месте
         errors.clear();
         checkForErrors(file);
 
@@ -103,18 +103,22 @@ public class ControllerHelper {
         errorChecker.setSmo(getSMO(file));
 //        errorChecker.checkForIncorrectDatN(data.getVisits());
 //        errorChecker.checkForIncorrectDatO(data.getVisits());
-        errorChecker.checkForIncorrectDocument(data.getHumans());
+//        errorChecker.checkForIncorrectDocument(data.getHumans());
 //        errorChecker.checkForIncorrectIshob(data.getVisits());
 //        errorChecker.checkForInсorrectMKB(data.getServices());
 //        errorChecker.checkForIncorrectOkato(data.getVisits());
-        errorChecker.checkForIncorrectPolisNumber(data.getVisits());
-        errorChecker.checkForIncorrectPolisType(data.getVisits());
+//        errorChecker.checkForIncorrectPolisNumber(data.getVisits());
+//        errorChecker.checkForIncorrectPolisType(data.getVisits());
 //        errorChecker.checkForIncorrectVMP(data.getServices());
-        errorChecker.checkForMoreThanOneVisit(data.getHumans());
-        errorChecker.checkForMissedService(data.getHumans());
+//        errorChecker.checkForMoreThanOneVisit(data.getHumans());
+//        errorChecker.checkForMissedService(data.getHumans());
 //        errorChecker.checkForCorrectOkatoForStrangers(data.getVisits());
-        errorChecker.checkForRedundantService(data.getHumans());
+//        errorChecker.checkForRedundantService(data.getHumans());
 //        errorChecker.checkReduandOGRN(data.getVisits());
+//        errorChecker.checkForIncorrectUslugaSpecialnost(data.getServices());
+//        errorChecker.checkForIncorrectMKBAtDispan(data.getServices());
+//        errorChecker.checkForIncorrectDateForUslugaDispan(data.getVisits());
+        errorChecker.checkForIncorrectSpecForChildrenStac(data.getServices());
     }
 
     private String getSMO(File file) {
