@@ -3,6 +3,7 @@ package company;
 import company.entity.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.joda.time.LocalDate;
+import org.joda.time.Months;
 import org.joda.time.Years;
 import org.springframework.stereotype.Service;
 
@@ -404,5 +405,21 @@ public class ErrorChecker {
             m = "Z00.3";
         }
         return m;
+    }
+
+    public void checkForIncorrectAgeForThisMKBWhenAgeIsIncorrect(Collection<NewService> newServices) {
+        List<String> mkbxList = Arrays.asList("Z00.1", "Z00.2", "Z00.3");
+        List<String> listOfUsluga = Arrays.asList("B04.028.003", "B04.031.004");
+
+        for (NewService service : newServices) {
+            Date birthDate = service.getVisit().getParent().getDatr();
+            Date serviceDate = service.getDatn();
+            if (mkbxList.contains(service.getMkbх()) && listOfUsluga.contains(service.getKusl())) {
+                int month = Months.monthsBetween(LocalDate.fromDateFields(birthDate), LocalDate.fromDateFields(serviceDate)).getMonths();
+                if (!service.getMkbх().equalsIgnoreCase(getMKBByMonth(month))) {
+                    errors.addError(service, "диагноз не соответствует возрасту");
+                }
+            }
+        }
     }
 }
