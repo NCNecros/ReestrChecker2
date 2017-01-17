@@ -1,5 +1,7 @@
 package company.entity;
 
+import company.Spr69Value;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -23,7 +25,38 @@ public class EntityFactory {
         return human;
     }
 
-    public static NewVisit buildVisitFromRow(Object[] row, Map<String, Integer> fieldList){
+    public static Spr69Value buildSpr69ValueFromRow(Object[] row, Map<String, Integer> fieldList) {
+        Spr69Value value = new Spr69Value();
+        value.setVpname(((String) row[fieldList.get("VPNAME")]).trim());
+        value.setMkbx(((String) row[fieldList.get("MKBX")]).trim());
+        value.setMkbx2(((String) row[fieldList.get("MKBX2")]).trim());
+        value.setKusl(((String) row[fieldList.get("KUSL")]).trim());
+        value.setAge(((String) row[fieldList.get("AGE")]).trim());
+        value.setPol(((String) row[fieldList.get("POL")]).trim());
+        value.setDlit(((String) row[fieldList.get("DLIT")]).trim());
+        value.setKsgcode(((String) row[fieldList.get("KSGCODE")]).trim());
+        value.setKsgkoef(((Double) row[fieldList.get("KSGKOEF")]));
+        value.setDatn(((Date) row[fieldList.get("DATN")]));
+        value.setDato(((Date) row[fieldList.get("DATO")]));
+        return value;
+    }
+
+    public static Doctor buildDoctorFromDbfRow(Object[] row, Map<String, Integer> fieldList) {
+        Doctor doctor = new Doctor();
+        doctor.setCodeMo(((String) row[fieldList.get("CODE_MO")]).trim());
+        doctor.setDocTabn(((String) row[fieldList.get("DOC_TABN")]).trim());
+        doctor.setSnils(((String) row[fieldList.get("SNILS")]).trim());
+        doctor.setFio(((String) row[fieldList.get("FIO")]).trim());
+        doctor.setIma(((String) row[fieldList.get("IMA")]).trim());
+        doctor.setOtch(((String) row[fieldList.get("OTCH")]).trim());
+        doctor.setPol(((String) row[fieldList.get("POL")]).trim());
+        doctor.setDatr(((Date) row[fieldList.get("DATR")]));
+        doctor.setDatn(((Date) row[fieldList.get("DATN")]));
+        doctor.setDato(((Date) row[fieldList.get("DATO")]));
+        return doctor;
+    }
+
+    public static NewVisit buildVisitFromRow(Object[] row, Map<String, Integer> fieldList) {
         NewVisit visit = new NewVisit();
         visit.setNs((Double) row[fieldList.get("NS")]);
         visit.setVs(((String) row[fieldList.get("VS")]).trim());
@@ -36,7 +69,7 @@ public class EntityFactory {
         visit.setSpv((Double) row[fieldList.get("SPV")]);
         visit.setSps(((String) row[fieldList.get("SPS")]).trim());
         visit.setSpn(((String) row[fieldList.get("SPN")]).trim());
-        visit.setStatP(((String) row[fieldList.get("STAT_P")]).trim());
+//        visit.setStatP(((String) row[fieldList.get("STAT_P")]).trim());
         visit.setqG(((String) row[fieldList.get("Q_G")]).trim());
         visit.setNovor(((String) row[fieldList.get("NOVOR")]).trim());
         visit.setFamp(((String) row[fieldList.get("FAMP")]).trim());

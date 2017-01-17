@@ -2,9 +2,9 @@ package company.entity;
 
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Necros on 10.11.2015.
@@ -14,6 +14,7 @@ public class Data {
     Map<String, NewHuman> mapNewHuman = new HashMap<>();
     Map<Double, NewVisit> visitMap = new HashMap<>();
     Map<Double, NewService> serviceMap = new HashMap<>();
+    Map<String, Doctor> doctorMap = new HashMap<>();
 
     public boolean containsHuman(String isti) {
         return mapNewHuman.containsKey(isti);
@@ -38,8 +39,13 @@ public class Data {
     public Collection<NewVisit> getVisits(){
         return visitMap.values();
     }
+
     public NewVisit getVisitBySn(Double sn){
         return visitMap.get(sn);
+    }
+
+    public Collection<Doctor> getDoctors() {
+        return doctorMap.values();
     }
 
     public NewService getServiceByUid(Double uid){
@@ -54,6 +60,10 @@ public class Data {
     public void add(NewService service){
         serviceMap.put(service.getUid(),service);
         getVisitBySn(service.getSn()).addService(service);
+    }
+
+    public void add(Doctor doctor) {
+        doctorMap.put(doctor.getDocTabn(), doctor);
     }
 
     public void clear(){

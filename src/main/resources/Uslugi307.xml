@@ -194,7 +194,7 @@
             <string>B01.031.013</string>
         </uslugi>
         <doctor>педиатр участковый</doctor>
-        <obrashenie>B01.031.016.01</obrashenie>
+        <obrashenie>B01.031.016.001</obrashenie>
     </uslugi307>
     <uslugi307>
         <uslugi class="java.util.ArrayList">

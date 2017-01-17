@@ -28,10 +28,11 @@ public class ExcelSaver {
         row.createCell(2).setCellValue("Дата рождения");
         row.createCell(3).setCellValue("Дата обращения");
         row.createCell(4).setCellValue("Ошибка");
+        row.createCell(5).setCellValue("Примечание");
         for (Error error : errors.stream()
                 .distinct()
-//                .sorted((error1, error2) -> error1.getHuman().compareTo(error2.getHuman()))
-                .sorted((error1, error2) -> getSnFromString(error1.getError()).compareTo(getSnFromString(error2.getError())))
+                .sorted((error1, error2) -> error1.getHuman().compareTo(error2.getHuman()))
+//                .sorted((error1, error2) -> getSnFromString(error1.getError()).compareTo(getSnFromString(error2.getError())))
                 .collect(Collectors.toList())) {
             counter++;
             row = sheet.createRow(counter);
@@ -60,6 +61,11 @@ public class ExcelSaver {
             } catch (NullPointerException e) {
                 row.createCell(4).setCellValue("");
             }
+            try {
+                row.createCell(5).setCellValue(error.getDescription());
+            } catch (NullPointerException e) {
+                row.createCell(5).setCellValue("");
+            }
         }
         try {
             FileOutputStream fos = new FileOutputStream(filename);
@@ -76,9 +82,7 @@ public class ExcelSaver {
     }
 
     private Integer getSnFromString(String string) {
-        Integer result = Integer.parseInt(string.split("[()]")[1]);
-        return result;
-
+        return Integer.parseInt(string.split("[()]")[1]);
     }
 
 }

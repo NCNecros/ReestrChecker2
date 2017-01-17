@@ -48,6 +48,11 @@ public class DataFiller {
         data.add(visit, human.getIsti());
     }
 
+    public void addDoctor(Object[] row, Map<String, Integer> fieldlist) {
+        Doctor doctor = EntityFactory.buildDoctorFromDbfRow(row, fieldlist);
+        data.add(doctor);
+    }
+
     public void addService(Object[] row, Map<String, Integer> fieldList) {
         final Double sn = ((Double) row[fieldList.get("SN")]);
         if (data.containsVisit(sn)) {

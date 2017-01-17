@@ -8,7 +8,38 @@ import java.util.Objects;
 /**
  * Created by Necros on 03.06.2015.
  */
-public class Error implements Comparable {
+public class Error implements Comparable<Error> {
+    private NewHuman human;
+    private NewVisit visit;
+    private NewService service;
+    private String error;
+    private String description;
+    public Error(NewHuman human, String error) {
+        this.human = human;
+        this.error = error;
+    }
+
+    public Error(Doctor doctor, String error) {
+        NewHuman human = new NewHuman();
+        human.setFio(doctor.getFio());
+        human.setDatr(doctor.getDatr());
+        human.setIma(doctor.getIma());
+        human.setOtch(doctor.getOtch());
+        this.human = human;
+        this.error = error;
+    }
+    public Error(NewVisit visit, String error) {
+        this.human = visit.getParent();
+        this.visit = visit;
+        this.error = error;
+    }
+    public Error(NewService service, String error) {
+        this.human = service.getVisit().getParent();
+        this.visit = service.getVisit();
+        this.service = service;
+        this.error = error;
+    }
+
     public NewHuman getHuman() {
         return human;
     }
@@ -23,29 +54,6 @@ public class Error implements Comparable {
 
     public String getError() {
         return error;
-    }
-
-    private NewHuman human;
-    private NewVisit visit;
-    private NewService service;
-    private String error;
-
-    public Error(NewHuman human, String error) {
-        this.human = human;
-        this.error = error;
-    }
-
-    public Error(NewVisit visit, String error) {
-        this.human = visit.getParent();
-        this.visit = visit;
-        this.error = error;
-    }
-
-    public Error(NewService service, String error) {
-        this.human = service.getVisit().getParent();
-        this.visit = service.getVisit();
-        this.service = service;
-        this.error = error;
     }
 
     @Override
@@ -80,8 +88,12 @@ public class Error implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(Error o) {
         Error otherError = (Error) o;
         return ComparisonChain.start().compare(human,otherError.getHuman()).compare(error,otherError.getError()).result();
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

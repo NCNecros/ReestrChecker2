@@ -30,6 +30,8 @@ public class ErrorChecker {
     @Resource(name = "mkbSet")
     private Set<String> mkbSet;
     private String smo;
+    @Resource(name = "spr69List")
+    private List<Spr69Value> spr69List;
 
     public ErrorChecker() {
     }
@@ -41,7 +43,7 @@ public class ErrorChecker {
         this.smo = smo;
     }
 
-
+    @Deprecated
     /**
      * Проверка на некорректно заполненное поле ВМП
      */
@@ -63,7 +65,8 @@ public class ErrorChecker {
                     // Проверка с разными врачами и одним диагнозом
                     // Boolean res = otherVisit.getMKB().equalsIgnoreCase(visit.getMKB());
                     Boolean res = otherVisit.getMKB().equalsIgnoreCase(visit.getMKB()) && otherVisit.getDoctor().equalsIgnoreCase(visit.getDoctor());
-                    if (res && visit.getServices().stream().anyMatch(e -> !e.getKusl().startsWith("B04"))) {
+                    Boolean spec = visit.getServices().stream().map(e -> e.getSpec()).findFirst().orElse("").equalsIgnoreCase(otherVisit.getServices().stream().map(e -> e.getSpec()).findFirst().orElse(" "));
+                    if (((visit.getMKB().equalsIgnoreCase(otherVisit.getMKB()) && spec) || res) && visit.getServices().stream().anyMatch(e -> !e.getKusl().startsWith("B04"))) {
                         errors.addError(visit, "содержит более одного обращения");
                     }
                 }
@@ -129,6 +132,7 @@ public class ErrorChecker {
      *
      * @param visitCollection
      */
+    @Deprecated
     public void checkForCorrectOkatoForStrangers(Collection<NewVisit> visitCollection) {
         List<NewVisit> visits = visitCollection.stream().filter(newVisit -> newVisit.getOkatoOms().startsWith("03") && newVisit.getPlOgrn().equals(TFOMS_OGRN)).collect(Collectors.toList());
         visits.forEach(newVisit -> errors.addError(newVisit, "краевой в счете для инокраевых"));
@@ -139,9 +143,70 @@ public class ErrorChecker {
      *
      * @param visitCollection
      */
+    @Deprecated
     public void checkForIncorrectOkato(Collection<NewVisit> visitCollection) {
         visitCollection.stream().filter(newVisit -> newVisit.getOkatoOms().isEmpty() && newVisit.getPlOgrn().equals(TFOMS_OGRN)).collect(Collectors.toList())
                 .stream().forEach(newVisit1 -> errors.addError(newVisit1, "не указана территория для инокраевого"));
+    }
+
+    private boolean ishobIsCorrect(NewVisit visit) {
+        Map<String, List<String>> ishobIshlMap = new HashMap<>(20);
+        ishobIshlMap.put("101", Arrays.asList("101", "102"));
+        ishobIshlMap.put("102", Arrays.asList("102", "103", "104"));
+        ishobIshlMap.put("103", Collections.singletonList("102"));
+        ishobIshlMap.put("104", Arrays.asList("102", "103", "104"));
+        ishobIshlMap.put("105", Collections.singletonList("105"));
+        ishobIshlMap.put("106", Collections.singletonList("105"));
+        ishobIshlMap.put("107", Arrays.asList("102", "103", "104"));
+        ishobIshlMap.put("108", Arrays.asList("102", "103"));
+        ishobIshlMap.put("110", Arrays.asList("102", "103", "104"));
+        ishobIshlMap.put("201", Arrays.asList("201", "202"));
+        ishobIshlMap.put("202", Arrays.asList("202", "203", "204"));
+        ishobIshlMap.put("203", Arrays.asList("203", "204"));
+        ishobIshlMap.put("204", Arrays.asList("202", "203", "204"));
+        ishobIshlMap.put("205", Collections.singletonList("205"));
+        ishobIshlMap.put("206", Collections.singletonList("205"));
+        ishobIshlMap.put("207", Arrays.asList("202", "203", "204"));
+        ishobIshlMap.put("208", Arrays.asList("202", "203"));
+        ishobIshlMap.put("301", Arrays.asList("301", "302"));
+        ishobIshlMap.put("302", Arrays.asList("303", "304", "305"));
+        ishobIshlMap.put("304", Arrays.asList("303", "304"));
+        ishobIshlMap.put("305", Arrays.asList("304", "305"));
+        ishobIshlMap.put("306", Arrays.asList("304", "305"));
+        ishobIshlMap.put("307", Arrays.asList("304", "305"));
+        ishobIshlMap.put("308", Arrays.asList("304", "305"));
+        ishobIshlMap.put("309", Arrays.asList("304", "305"));
+        ishobIshlMap.put("310", Arrays.asList("303", "304"));
+        ishobIshlMap.put("311", Arrays.asList("302", "303"));
+        ishobIshlMap.put("312", Collections.singletonList("306"));
+        ishobIshlMap.put("313", Collections.singletonList("307"));
+        ishobIshlMap.put("314", Collections.singletonList("306"));
+        ishobIshlMap.put("315", Arrays.asList("304", "305"));
+        ishobIshlMap.put("316", Arrays.asList("304", "305"));
+        ishobIshlMap.put("317", Collections.singletonList("306"));
+        ishobIshlMap.put("318", Collections.singletonList("306"));
+        ishobIshlMap.put("319", Collections.singletonList("306"));
+        ishobIshlMap.put("320", Collections.singletonList("306"));
+        ishobIshlMap.put("321", Collections.singletonList("306"));
+        ishobIshlMap.put("355", Collections.singletonList("306"));
+        ishobIshlMap.put("356", Collections.singletonList("306"));
+        ishobIshlMap.put("401", Arrays.asList("401", "402"));
+        ishobIshlMap.put("402", Arrays.asList("402", "403"));
+        ishobIshlMap.put("403", Arrays.asList("402", "403"));
+        ishobIshlMap.put("404", Arrays.asList("402", "403"));
+        ishobIshlMap.put("405", Collections.singletonList("404"));
+        ishobIshlMap.put("406", Collections.singletonList("404"));
+
+        return (ishobIshlMap.get(visit.getIshob()).contains(visit.getIshl()));
+    }
+
+    /**
+     * Проверка на ошибку 903
+     */
+    public void checkForError903(Collection<NewVisit> visitCollection) {
+        visitCollection.stream().filter(
+                newVisit -> !ishobIsCorrect(newVisit)
+        ).forEach(newVisit -> errors.addError(newVisit, "иход лечения не соответствует исходу обращения"));
     }
 
     /**
@@ -149,6 +214,7 @@ public class ErrorChecker {
      *
      * @param visitCollection
      */
+    @Deprecated
     public void checkForIncorrectPolisNumber(Collection<NewVisit> visitCollection) {
         visitCollection.stream().filter(
                 newVisit ->
@@ -163,6 +229,7 @@ public class ErrorChecker {
      *
      * @param visitCollection
      */
+    @Deprecated
     public void checkForIncorrectPolisType(Collection<NewVisit> visitCollection) {
         visitCollection.stream()
                 .filter(newVisit -> !(newVisit.getSpv() == 3 || newVisit.getSpv() == 2 || newVisit.getSpv() == 1 || newVisit.getSpv() == 4))
@@ -175,7 +242,10 @@ public class ErrorChecker {
             for (NewVisit visit : human.getAllVisits().values()) {
                 List<String> services = visit.getServices().stream().map(NewService::getKusl).collect(Collectors.toList());
                 if (services.size() > 1 && (CollectionUtils.containsAny(services, uslugi)) && !services.contains(obrashenie)) {
-                    errors.addError(visit, "отсутствует обращение к врач-" + doctor);
+//                    if (!visit.getMKB().equalsIgnoreCase("Z34.0")&&!visit.getMKB().equalsIgnoreCase("O99.8")) {
+                    if (!visit.getMKB().equalsIgnoreCase("Z34.0")) {
+                        errors.addError(visit, "отсутствует обращение к врач-" + doctor);
+                    }
                 }
             }
         }
@@ -186,7 +256,7 @@ public class ErrorChecker {
      *
      * @param humanCollection
      */
-    public void checkForRedundantService(Collection<NewHuman> humanCollection) {
+    void checkForRedundantService(Collection<NewHuman> humanCollection) {
         for (Uslugi307 uslugi307 : uslugi307List.getUslugi()) {
             checkForRedundantDoctorService(uslugi307.getUslugi(), uslugi307.getObrashenie(), humanCollection);
         }
@@ -205,6 +275,7 @@ public class ErrorChecker {
                 if (CollectionUtils.containsAny(services, uslugi) && services.contains(obrashenie) && services.size() == 2) {
                     errors.addError(visit, "содержит лишнее обращение");
                 }
+//                if ((visit.getMKB().equalsIgnoreCase("Z34.0") || visit.getMKB().equalsIgnoreCase("O99.8")) && ginecologServices.size() > 0 && ginecologServices.contains(obrashenie)) {
                 if ((visit.getMKB().equalsIgnoreCase("Z34.0")) && ginecologServices.size() > 0 && ginecologServices.contains(obrashenie)) {
                     errors.addError(visit, "содержит лишнее обращение");
                 }
@@ -274,16 +345,77 @@ public class ErrorChecker {
             LocalDate birthDate = new LocalDate(service.getVisit().getParent().getDatr());
             Years years = Years.yearsBetween(birthDate, now);
             if (years.getYears() < 18) {
-                if (service.getKusl().startsWith("G10.2716")) {
-                    if (!service.getSpec().equals("1134") && !service.getSpec().equalsIgnoreCase("22")) {
+                if (service.getKusl().startsWith("G10.27") || service.getKusl().startsWith("G10.22")) {
+                    if (!service.getSpec().equalsIgnoreCase("22")) {
                         errors.addError(service, "(" + service.getUid().intValue() + ") специальность не соответствует возрасту д.б. педиатрия(22|68)");
                     }
-                }
-                if (service.getKusl().startsWith("G10.3116")) {
-                    if (!service.getSpec().equals("1134") && !(service.getSpec().equalsIgnoreCase("11") || service.getSpec().equalsIgnoreCase("28"))) {
-                        errors.addError(service, "(" + service.getUid().intValue() + ") специальность не соответствует возрасту д.б. хирургия(11|20)");
+                } else if (service.getKusl().startsWith("G10.31") || service.getKusl().startsWith("G10.10")) {
+                    if (!(service.getSpec().equalsIgnoreCase("11") || service.getSpec().equalsIgnoreCase("22"))) {
+                        errors.addError(service, "(" + service.getUid().intValue() + ") специальность не соответствует возрасту д.б. дет хирургия(11|20)");
+                    }
+                } else if (service.getKusl().startsWith("G10.09")) {
+                    if (!(service.getSpec().equalsIgnoreCase("42") || service.getSpec().equalsIgnoreCase("22"))) {
+                        errors.addError(service, "(" + service.getUid().intValue() + ") специальность не соответствует возрасту д.б. дет. ур-андр(42|19)");
+                    }
+                } else if (service.getKusl().startsWith("G10")) {
+                    if (service.getVp().equals("12")
+                            && (service.getSpec().equalsIgnoreCase("30") || service.getSpec().equalsIgnoreCase("27"))) {
+                        errors.addError(service, "(" + service.getUid().intValue() + ") специальность не соответствует возрасту");
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Проверка на соответсвие специальности врача и профиля услуги
+     *
+     * @param services
+     */
+    public void checkForIncorrectSpecAndProfilStac(Collection<NewService> services) {
+        for (NewService service : services) {
+            if (service.getSpec().equalsIgnoreCase("22") && !service.getProfil().equalsIgnoreCase("68")) {
+                errors.addError(service, "(" + service.getUid().intValue() + ") несоответствие специальности и профиля д.б. педиатрия(22|68)");
+            }
+        }
+    }
+
+    public void checkForIncorrectDoctorSnils(Collection<Doctor> doctors) {
+        for (Doctor doctor : doctors) {
+            if (doctor.getSnils().isEmpty()) {
+                errors.addError(doctor, "у доктора отсутствует СНИЛС");
+            }
+        }
+    }
+
+    public void checkForIncorrectDoctorDant(Collection<Doctor> doctors) {
+        for (Doctor doctor : doctors) {
+            if (Objects.isNull(doctor.getDatn())) {
+                errors.addError(doctor, "у доктора отсутствует дата начала работы");
+            }
+        }
+    }
+
+    void checkForIncorrectSpr69(Collection<NewVisit> visits) {
+        List<Integer> spr69HashsWithMkb = new ArrayList<>();
+        List<Integer> spr69HashsWithOutMkb = new ArrayList<>();
+        for (Spr69Value spr69Value : spr69List) {
+            spr69HashsWithMkb.add(Objects.hash(spr69Value.getKsgcode(), spr69Value.getKusl(), spr69Value.getMkbx()));
+            spr69HashsWithOutMkb.add(Objects.hash(spr69Value.getKsgcode(), spr69Value.getKusl()));
+        }
+        for (NewVisit visit : visits) {
+            String operation = "";
+            String mkb = visit.getMKB();
+            String ksg = "";
+            for (NewService service : visit.getServices()) {
+                if (service.getKusl().startsWith("A")) {
+                    operation = service.getKusl();
+                } else if (service.getKusl().startsWith("G")) {
+                    ksg = service.getKusl();
+                }
+            }
+            if (!(spr69HashsWithMkb.contains(Objects.hash(ksg, operation, mkb)) && spr69HashsWithOutMkb.contains(Objects.hash(ksg, operation)))) {
+                errors.addError(visit, "КСГ не соответствует SPR69");
             }
         }
     }
