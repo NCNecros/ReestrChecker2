@@ -5,9 +5,10 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.*;
+
 import static org.mockito.Mockito.*;
 
-import java.util.*;
 
 public class ErrorCheckerTest {
 
@@ -29,10 +30,10 @@ public class ErrorCheckerTest {
         NewHuman human = getCorrectHuman();
         NewVisit visit = new NewVisit();
         NewService service = new NewService();
-        service.setSn(1d);
-        visit.setSn(1d);
-        visit.setDatn(new Date(2015, 1, 2));
-        service.setDatn(new Date(2015, 1, 3));
+        service.setSn(1);
+        visit.setSn(1);
+        visit.setDatn(new LocalDate(2015, 1, 2).toDate());
+        service.setDatn(new LocalDate(2015, 1, 3).toDate());
 
         errorChecker.checkForIncorrectDatN(Collections.singletonList(visit));
 
@@ -44,10 +45,10 @@ public class ErrorCheckerTest {
         NewHuman human = getCorrectHuman();
         NewVisit visit = new NewVisit();
         NewService service = new NewService();
-        service.setSn(1d);
-        visit.setSn(1d);
-        visit.setDato(new Date(2015, 1, 2));
-        service.setDato(new Date(2015, 1, 3));
+        service.setSn(1);
+        visit.setSn(1);
+        visit.setDato(new LocalDate(2015, 1, 2).toDate());
+        service.setDato(new LocalDate(2015, 1, 3).toDate());
         errorChecker.checkForIncorrectDatO(Collections.singletonList(visit));
         verify(listOfError, only()).addError(visit, "нет услуги совпадающей с датой окончания");
     }
@@ -75,13 +76,13 @@ public class ErrorCheckerTest {
         NewHuman human = getCorrectHuman();
 
         NewVisit visitOne = new NewVisit();
-        visitOne.setSn(12d);
+        visitOne.setSn(12);
         NewService serviceOne = getServiceByTabnAndMkb("111", "O20.0", "B01.001");
         visitOne.addService(serviceOne);
         human.addVisit(visitOne);
 
         NewVisit visitTwo = new NewVisit();
-        visitTwo.setSn(13d);
+        visitTwo.setSn(13);
         NewService serviceTwo = getServiceByTabnAndMkb("111", "O20.0", "B01.001");
         visitTwo.addService(serviceTwo);
         human.addVisit(visitTwo);
@@ -98,13 +99,13 @@ public class ErrorCheckerTest {
         NewHuman human = getCorrectHuman();
 
         NewVisit visitOne = new NewVisit();
-        visitOne.setSn(12d);
+        visitOne.setSn(12);
         NewService serviceOne = getServiceByTabnAndMkb("111", "O20.0", "B01.001");
         visitOne.addService(serviceOne);
         human.addVisit(visitOne);
 
         NewVisit visitTwo = new NewVisit();
-        visitTwo.setSn(13d);
+        visitTwo.setSn(13);
         NewService serviceTwo = getServiceByTabnAndMkb("111", "O21.0", "B01.001");
         visitTwo.addService(serviceTwo);
         human.addVisit(visitTwo);
@@ -122,13 +123,13 @@ public class ErrorCheckerTest {
         NewHuman human = getCorrectHuman();
 
         NewVisit visitOne = new NewVisit();
-        visitOne.setSn(12d);
+        visitOne.setSn(12);
         NewService serviceOne = getServiceByTabnAndMkb("111", "O20.0", "B01.001");
         visitOne.addService(serviceOne);
         human.addVisit(visitOne);
 
         NewVisit visitTwo = new NewVisit();
-        visitTwo.setSn(13d);
+        visitTwo.setSn(13);
         NewService serviceTwo = getServiceByTabnAndMkb("111", "O20.0", "B01.002");
         visitTwo.addService(serviceTwo);
         human.addVisit(visitTwo);
@@ -156,7 +157,7 @@ public class ErrorCheckerTest {
     @Test
     public void testCheckForIncorrectPolisNumberForTemporalyPolisWhenItIsIncorrect() {
         NewVisit visit = new NewVisit();
-        visit.setSpv(2d);
+        visit.setSpv(2);
         visit.setSpn("231");
         visit.setSps("");
 
@@ -168,7 +169,7 @@ public class ErrorCheckerTest {
     @Test
     public void testCheckForIncorrectPolisNumberForPermanentWhenItIsIncorrect() {
         NewVisit visit = new NewVisit();
-        visit.setSpv(3d);
+        visit.setSpv(3);
         visit.setSpn("0420887000398");
         visit.setSps("");
 
@@ -245,7 +246,7 @@ public class ErrorCheckerTest {
     @Test
     public void testCheckForIncorrectDocument() {
         NewHuman human = getCorrectHuman();
-        human.setcDoc(1d);
+        human.setcDoc(1);
         human.setnDoc("");
         human.setsDoc("");
         errorChecker.checkForIncorrectDocument(Arrays.asList(human));
@@ -329,13 +330,13 @@ public class ErrorCheckerTest {
         NewHuman human = getCorrectHuman();
 
         NewVisit visitOne = new NewVisit();
-        visitOne.setSn(12d);
+        visitOne.setSn(12);
         NewService serviceOne = getServiceByTabnAndMkb("111", "Z00.0", "B04.001");
         visitOne.addService(serviceOne);
         human.addVisit(visitOne);
 
         NewVisit visitTwo = new NewVisit();
-        visitTwo.setSn(13d);
+        visitTwo.setSn(13);
         NewService serviceTwo = getServiceByTabnAndMkb("111", "Z00.0", "B04.001");
         visitTwo.addService(serviceTwo);
         human.addVisit(visitTwo);
@@ -388,7 +389,7 @@ public class ErrorCheckerTest {
     @Test
     public void testCheckPolisTypeWhenItIsNotOk() {
         NewVisit visit = new NewVisit();
-        visit.setSpv(0d);
+        visit.setSpv(0);
 
         errorChecker.checkForIncorrectPolisType(Collections.singletonList(visit));
 

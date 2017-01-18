@@ -1,121 +1,124 @@
 package company.entity;
 
 import company.Spr69Value;
+import org.jamel.dbf.structure.DbfRow;
 
-import java.util.Date;
-import java.util.Map;
+import java.nio.charset.Charset;
 
 /**
  * Фабрика сущностей
  */
 public class EntityFactory {
-    public static NewHuman buildHumanFromDbfRow(Object[] row, Map<String, Integer> fieldList) {
+
+    public static final Charset CHARSET = Charset.forName("cp866");
+
+    public static NewHuman buildHumanFromDbfRow(DbfRow row) {
         NewHuman human = new NewHuman();
-        human.setFio(((String) row[fieldList.get("FIO")]).trim());
-        human.setIma(((String) row[fieldList.get("IMA")]).trim());
-        human.setOtch(((String) row[fieldList.get("OTCH")]).trim());
-        human.setPol(((String) row[fieldList.get("POL")]).trim());
-        human.setDatr(((Date) row[fieldList.get("DATR")]));
-        human.setKat(((String) row[fieldList.get("KAT")]).trim());
-        human.setSnils(((String) row[fieldList.get("SNILS")]).trim());
-        human.setcDoc(((Double) row[fieldList.get("C_DOC")]));
-        human.setsDoc(((String) row[fieldList.get("S_DOC")]).trim());
-        human.setnDoc(((String) row[fieldList.get("N_DOC")]).trim());
-        human.setIsti(((String) row[fieldList.get("ISTI")]).trim());
+        human.setFio(row.getString("FIO", CHARSET));
+        human.setIma(row.getString("IMA", CHARSET));
+        human.setOtch(row.getString("OTCH", CHARSET));
+        human.setPol(row.getString("POL", CHARSET));
+        human.setDatr(row.getDate("DATR"));
+        human.setKat(row.getString("KAT", CHARSET));
+        human.setSnils(row.getString("SNILS", CHARSET));
+        human.setcDoc(row.getInt("C_DOC"));
+        human.setsDoc(row.getString("S_DOC", CHARSET));
+        human.setnDoc(row.getString("N_DOC", CHARSET));
+        human.setIsti(row.getString("ISTI", CHARSET));
         return human;
     }
 
-    public static Spr69Value buildSpr69ValueFromRow(Object[] row, Map<String, Integer> fieldList) {
+    public static Spr69Value buildSpr69ValueFromRow(DbfRow row) {
         Spr69Value value = new Spr69Value();
-        value.setVpname(((String) row[fieldList.get("VPNAME")]).trim());
-        value.setMkbx(((String) row[fieldList.get("MKBX")]).trim());
-        value.setMkbx2(((String) row[fieldList.get("MKBX2")]).trim());
-        value.setKusl(((String) row[fieldList.get("KUSL")]).trim());
-        value.setAge(((String) row[fieldList.get("AGE")]).trim());
-        value.setPol(((String) row[fieldList.get("POL")]).trim());
-        value.setDlit(((String) row[fieldList.get("DLIT")]).trim());
-        value.setKsgcode(((String) row[fieldList.get("KSGCODE")]).trim());
-        value.setKsgkoef(((Double) row[fieldList.get("KSGKOEF")]));
-        value.setDatn(((Date) row[fieldList.get("DATN")]));
-        value.setDato(((Date) row[fieldList.get("DATO")]));
+        value.setVpname(row.getString("VPNAME", CHARSET));
+        value.setMkbx(row.getString("MKBX", CHARSET));
+        value.setMkbx2(row.getString("MKBX2", CHARSET));
+        value.setKusl(row.getString("KUSL", CHARSET));
+        value.setAge(row.getString("AGE", CHARSET));
+        value.setPol(row.getString("POL", CHARSET));
+        value.setDlit(row.getString("DLIT", CHARSET));
+        value.setKsgcode(row.getString("KSGCODE", CHARSET));
+        value.setKsgkoef(row.getDouble("KSGKOEF"));
+        value.setDatn(row.getDate("DATN"));
+        value.setDato(row.getDate("DATO"));
         return value;
     }
 
-    public static Doctor buildDoctorFromDbfRow(Object[] row, Map<String, Integer> fieldList) {
+    public static Doctor buildDoctorFromDbfRow(DbfRow row) {
         Doctor doctor = new Doctor();
-        doctor.setCodeMo(((String) row[fieldList.get("CODE_MO")]).trim());
-        doctor.setDocTabn(((String) row[fieldList.get("DOC_TABN")]).trim());
-        doctor.setSnils(((String) row[fieldList.get("SNILS")]).trim());
-        doctor.setFio(((String) row[fieldList.get("FIO")]).trim());
-        doctor.setIma(((String) row[fieldList.get("IMA")]).trim());
-        doctor.setOtch(((String) row[fieldList.get("OTCH")]).trim());
-        doctor.setPol(((String) row[fieldList.get("POL")]).trim());
-        doctor.setDatr(((Date) row[fieldList.get("DATR")]));
-        doctor.setDatn(((Date) row[fieldList.get("DATN")]));
-        doctor.setDato(((Date) row[fieldList.get("DATO")]));
+        doctor.setCodeMo(row.getString("CODE_MO", CHARSET));
+        doctor.setDocTabn(row.getString("DOC_TABN", CHARSET));
+        doctor.setSnils(row.getString("SNILS", CHARSET));
+        doctor.setFio(row.getString("FIO", CHARSET));
+        doctor.setIma(row.getString("IMA", CHARSET));
+        doctor.setOtch(row.getString("OTCH", CHARSET));
+        doctor.setPol(row.getString("POL", CHARSET));
+        doctor.setDatr(row.getDate("DATR"));
+        doctor.setDatn(row.getDate("DATN"));
+        doctor.setDato(row.getDate("DATO"));
         return doctor;
     }
 
-    public static NewVisit buildVisitFromRow(Object[] row, Map<String, Integer> fieldList) {
+    public static NewVisit buildVisitFromRow(DbfRow row) {
         NewVisit visit = new NewVisit();
-        visit.setNs((Double) row[fieldList.get("NS")]);
-        visit.setVs(((String) row[fieldList.get("VS")]).trim());
-        visit.setDats((Date) row[fieldList.get("DATS")]);
-        visit.setSn((Double) row[fieldList.get("SN")]);
-        visit.setDatps((Date) row[fieldList.get("DATPS")]);
-        visit.setCodeMo(((String) row[fieldList.get("CODE_MO")]).trim());
-        visit.setPlOgrn(((String) row[fieldList.get("PL_OGRN")]).trim());
-        visit.setOkatoOms(((String) row[fieldList.get("OKATO_OMS")]).trim());
-        visit.setSpv((Double) row[fieldList.get("SPV")]);
-        visit.setSps(((String) row[fieldList.get("SPS")]).trim());
-        visit.setSpn(((String) row[fieldList.get("SPN")]).trim());
-//        visit.setStatP(((String) row[fieldList.get("STAT_P")]).trim());
-        visit.setqG(((String) row[fieldList.get("Q_G")]).trim());
-        visit.setNovor(((String) row[fieldList.get("NOVOR")]).trim());
-        visit.setFamp(((String) row[fieldList.get("FAMP")]).trim());
-        visit.setImp(((String) row[fieldList.get("IMP")]).trim());
-        visit.setOtp(((String) row[fieldList.get("OTP")]).trim());
-        visit.setPolp(((String) row[fieldList.get("POLP")]).trim());
-        visit.setDatrp((Date) row[fieldList.get("DATRP")]);
-        visit.setNaprMo(((String) row[fieldList.get("NAPR_MO")]).trim());
-        visit.setNaprN(((String) row[fieldList.get("NAPR_N")]).trim());
-        visit.setDatn((Date) row[fieldList.get("DATN")]);
-        visit.setDato((Date) row[fieldList.get("DATO")]);
-        visit.setIshl(((String) row[fieldList.get("ISHL")]).trim());
-        visit.setIshob(((String) row[fieldList.get("ISHOB")]).trim());
-        visit.setMp(((String) row[fieldList.get("MP")]).trim());
-        visit.setSummaI((Double) row[fieldList.get("SUMMA_I")]);
-        visit.setPv(((String) row[fieldList.get("PV")]).trim());
-        visit.setDvozvrat((Date) row[fieldList.get("DVOZVRAT")]);
+        visit.setNs(row.getInt("NS"));
+        visit.setVs(row.getString("VS", CHARSET));
+        visit.setDats(row.getDate("DATS"));
+        visit.setSn(row.getInt("SN"));
+        visit.setDatps(row.getDate("DATPS"));
+        visit.setCodeMo(row.getString("CODE_MO", CHARSET));
+        visit.setPlOgrn(row.getString("PL_OGRN", CHARSET));
+        visit.setOkatoOms(row.getString("OKATO_OMS", CHARSET));
+        visit.setSpv(row.getInt("SPV"));
+        visit.setSps(row.getString("SPS", CHARSET));
+        visit.setSpn(row.getString("SPN", CHARSET));
+//        visit.setStatP(row.getString("STAT_P",CHARSET));
+        visit.setqG(row.getString("Q_G", CHARSET));
+        visit.setNovor(row.getString("NOVOR", CHARSET));
+        visit.setFamp(row.getString("FAMP", CHARSET));
+        visit.setImp(row.getString("IMP", CHARSET));
+        visit.setOtp(row.getString("OTP", CHARSET));
+        visit.setPolp(row.getString("POLP", CHARSET));
+        visit.setDatrp(row.getDate("DATRP"));
+        visit.setNaprMo(row.getString("NAPR_MO", CHARSET));
+        visit.setNaprN(row.getString("NAPR_N", CHARSET));
+        visit.setDatn(row.getDate("DATN"));
+        visit.setDato(row.getDate("DATO"));
+        visit.setIshl(row.getString("ISHL", CHARSET));
+        visit.setIshob(row.getString("ISHOB", CHARSET));
+        visit.setMp(row.getString("MP", CHARSET));
+        visit.setSummaI(row.getDouble("SUMMA_I"));
+        visit.setPv(row.getString("PV", CHARSET));
+        visit.setDvozvrat(row.getDate("DVOZVRAT"));
         return visit;
     }
 
-    public static NewService buildServiceFromRow(Object[] row, Map<String, Integer> fieldList) {
+    public static NewService buildServiceFromRow(DbfRow row) {
         NewService service = new NewService();
-        service.setUid(((Double) row[fieldList.get("UID")]));
-        service.setCodeMo(((String) row[fieldList.get("CODE_MO")]).trim());
-        service.setNs(((Double) row[fieldList.get("NS")]));
-        service.setSn(((Double) row[fieldList.get("SN")]));
-        service.setKotd(((String) row[fieldList.get("KOTD")]).trim());
-        service.setKpk(((String) row[fieldList.get("KPK")]).trim());
-        service.setMkbх(((String) row[fieldList.get("MKBX")]).trim());
-        service.setMkbхs(((String) row[fieldList.get("MKBXS")]).trim());
-        service.setKstand(((String) row[fieldList.get("KSTAND")]).trim());
-        service.setVp(((String) row[fieldList.get("VP")]).trim());
-        service.setKusl(((String) row[fieldList.get("KUSL")]).trim());
-        service.setKolu(((Double) row[fieldList.get("KOLU")]));
-        service.setKd(((Double) row[fieldList.get("KD")]));
-        service.setDatn(((Date) row[fieldList.get("DATN")]));
-        service.setDato(((Date) row[fieldList.get("DATO")]));
-        service.setTaru(((Double) row[fieldList.get("TARU")]));
-        service.setSumm(((Double) row[fieldList.get("SUMM")]));
-        service.setIsOut(((Double) row[fieldList.get("IS_OUT")]));
-        service.setOutMo(((String) row[fieldList.get("OUT_MO")]).trim());
-        service.setDocTabn(((String) row[fieldList.get("DOC_TABN")]).trim());
-        service.setSpec(((String) row[fieldList.get("SPEC")]).trim());
-        service.setProfil(((String) row[fieldList.get("PROFIL")]).trim());
-        service.setVmp(((String) row[fieldList.get("VMP")]).trim());
-        service.setKSO(((String) row[fieldList.get("KSO")]).trim());
+        service.setUid(row.getInt("UID"));
+        service.setCodeMo(row.getString("CODE_MO", CHARSET));
+        service.setNs(row.getInt("NS"));
+        service.setSn(row.getInt("SN"));
+        service.setKotd(row.getString("KOTD", CHARSET));
+        service.setKpk(row.getString("KPK", CHARSET));
+        service.setMkbх(row.getString("MKBX", CHARSET));
+        service.setMkbхs(row.getString("MKBXS", CHARSET));
+        service.setKstand(row.getString("KSTAND", CHARSET));
+        service.setVp(row.getString("VP", CHARSET));
+        service.setKusl(row.getString("KUSL", CHARSET));
+        service.setKolu(row.getInt("KOLU"));
+        service.setKd(row.getInt("KD"));
+        service.setDatn(row.getDate("DATN"));
+        service.setDato(row.getDate("DATO"));
+        service.setTaru(row.getDouble("TARU"));
+        service.setSumm(row.getDouble("SUMM"));
+        service.setIsOut(row.getInt("IS_OUT"));
+        service.setOutMo(row.getString("OUT_MO", CHARSET));
+        service.setDocTabn(row.getString("DOC_TABN", CHARSET));
+        service.setSpec(row.getString("SPEC", CHARSET));
+        service.setProfil(row.getString("PROFIL", CHARSET));
+        service.setVmp(row.getString("VMP", CHARSET));
+        service.setKSO(row.getString("KSO", CHARSET));
         return service;
     }
 }

@@ -1,12 +1,13 @@
 package company;
 
 import company.entity.*;
+import org.jamel.dbf.structure.DbfRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Map;
+import java.nio.charset.Charset;
 
 /**
  * Класс содержит методы превращения данных из дбф в внутреннюю структуру классов
@@ -16,8 +17,9 @@ import java.util.Map;
 public class DataFiller {
     private static final Logger logger = LoggerFactory.getLogger(DataFiller.class);
     @Resource
+    private
     Data data;
-
+    private String ENCODING = "cp866";
     public DataFiller() {
     }
 
@@ -33,30 +35,30 @@ public class DataFiller {
         data.clear();
     }
 
-    public void addHumanAndVisit(Object[] row, Map<String, Integer> fieldList) {
-        String isti = ((String) row[fieldList.get("ISTI")]).trim();
+    public void addHumanAndVisit(DbfRow row) {
+        String isti = row.getString("ISTI", Charset.forName(ENCODING));
         NewHuman human;
 
         if (data.containsHuman(isti)) {
             human = data.getHumanByIsti(isti);
         } else {
-            human = EntityFactory.buildHumanFromDbfRow(row, fieldList);
+            human = EntityFactory.buildHumanFromDbfRow(row);
             data.add(human);
         }
-        NewVisit visit = EntityFactory.buildVisitFromRow(row, fieldList);
+        NewVisit visit = EntityFactory.buildVisitFromRow(row);
 
         data.add(visit, human.getIsti());
     }
 
-    public void addDoctor(Object[] row, Map<String, Integer> fieldlist) {
-        Doctor doctor = EntityFactory.buildDoctorFromDbfRow(row, fieldlist);
+    public void addDoctor(DbfRow row) {
+        Doctor doctor = EntityFactory.buildDoctorFromDbfRow(row);
         data.add(doctor);
     }
 
-    public void addService(Object[] row, Map<String, Integer> fieldList) {
-        final Double sn = ((Double) row[fieldList.get("SN")]);
+    public void addService(DbfRow row) {
+        final Integer sn = row.getInt("SN");
         if (data.containsVisit(sn)) {
-            NewService service = EntityFactory.buildServiceFromRow(row, fieldList);
+            NewService service = EntityFactory.buildServiceFromRow(row);
             data.add(service);
         } else {
             logger.error("Возникла ошибка при загрузке файла U. В системе отсутствует нужный талон.");

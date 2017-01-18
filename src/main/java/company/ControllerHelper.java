@@ -20,6 +20,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+enum SchetType {
+    STACIONAR,
+    POLICLINICA,
+    DISPANSER;
+}
+
 @Service
 @Scope(value = "singleton")
 public class ControllerHelper {
@@ -118,7 +124,8 @@ public class ControllerHelper {
             String codeMo = data.getVisits().stream().findFirst().orElseThrow(NoSuchElementException::new).getCodeMo();
 //            errorChecker.checkForIncorrectDoctorSnils(data.getDoctors());
 //            errorChecker.checkForIncorrectDoctorDant(data.getDoctors());
-            errorChecker.checkForIncorrectSpr69(data.getVisits());
+            errorChecker.checkForIncorrectNaprMoCodeAndNumber(data.getVisits());
+//            errorChecker.checkForIncorrectSpr69(data.getVisits());
             if (codeMo.equals("06008")) {
 //                errorChecker.checkForIncorrectSpecForChildrenStac(data.getServices());
 //                errorChecker.checkForIncorrectSpecAndProfilStac(data.getServices());

@@ -8,16 +8,16 @@ import java.util.stream.Collectors;
  * Класс-сущность Посещение
  */
 public class NewVisit {
-    Set<NewService> services = new HashSet<>(0);
-    private Long id;
+    private Set<NewService> services = new HashSet<>(3);
+    private Integer id;
     //номер реестра счетов (Номер счета и реестра счетов для медицинской организации уникальны в течение года.
-    private Double ns;
+    private Integer ns;
     //тип реестра счетов (Медицинская организация проставляет значения 2, 4, 5, 6, 8, 9. После проверки реестра счетов Плательщик изменяет значение поля VS на 3, 7 для возвратных счетов.| Одинаково для всех персональных счетов в реестре.) SPR21
     private String vs;
     //дата формирования реестра счетов (дата формирования реестра счетов соответствует последнему числу отчетного месяца и совпадает с датой счета на бумажном носителе.; Одинаково для всех персональных счетов в реестре.)
     private Date dats;
     //номер персонального счета
-    private Double sn;
+    private Integer sn;
     //Дата формирования персонального счета (При формировании повторного реестра дата формирования персонального счета остается неизменной и содержит в себе первоначальные значения персонального счета.)
     private Date datps;
     //код МО, оказавшей медицинскую помощь SPR01
@@ -27,14 +27,11 @@ public class NewVisit {
     //код ОКАТО территории страхования по ОМС Да (для инокраевых) SPR39
     private String okatoOms;
     //тип документа, подтверждающего факт страхования по ОМС (Заполняется следующими значениями (1 - Полис ОМС старого образца; 2 - Временное свидетельство; 3 - Полис ОМС единого образца; 4 – Электронный полис ОМС единого образца; 5 – Полис ОМС в составе УЭК.)
-    private Double spv;
+    private Integer spv;
     //серия документа, подтверждающего факт страхования по ОМС
     private String sps;
     //номер документа, подтверждающего факт страхования по ОМС (В поле SPN необходимо указывать: - для временных свидетельств девятизначный цифровой код (например, ХХХХХХХХХ, где Х – число от 0 до 9); - для полисов единого образца необходимо указывать шестнадцатизначный цифровой код (ХХХХХХХХХХХХХХХХ, где Х – число от 0 до 9).)
     private String spn;
-    //статус представителя пациента SPR41
-    @Deprecated
-    private String statP;
     //признак "Особый случай" при регистрации  обращения за медицинской помощью (Признак "Особый случай" заполняется в соответствии со справочником, по шаблону: XXXX. Поле содержит до 5 особых случаев (максимальное количество). Если имеется одновременно несколько особых случаев, коды проставляются в порядке возрастания (от "1" до "6", например: 134). Если признак "Особый случай" отсутствует, то поле не заполняется.) SPR42
     private String qG;
     //признак новорожденного (Заполняется значением ПДДММГГН, где П - пол ребенка (1 – мужской, 2 - женский), ДДММГГ – дата рождения, Н – порядковый номер ребенка в случае двойни (тройни) (до двух знаков).)
@@ -74,6 +71,10 @@ public class NewVisit {
     //Человек которому принадлежит посещение
     private NewHuman parent;
 
+    public boolean containsKusl(String kusl) {
+        return services.stream().anyMatch(e -> e.getKusl().contentEquals(kusl));
+    }
+
     public Set<NewService> getServices() {
         return services;
     }
@@ -82,11 +83,11 @@ public class NewVisit {
         this.services = services;
     }
 
-    public Double getNs() {
+    public Integer getNs() {
         return ns;
     }
 
-    public void setNs(Double ns) {
+    public void setNs(Integer ns) {
         this.ns = ns;
     }
 
@@ -106,11 +107,11 @@ public class NewVisit {
         this.dats = dats;
     }
 
-    public Double getSn() {
+    public Integer getSn() {
         return sn;
     }
 
-    public void setSn(Double sn) {
+    public void setSn(Integer sn) {
         this.sn = sn;
     }
 
@@ -146,11 +147,11 @@ public class NewVisit {
         this.okatoOms = okatoOms;
     }
 
-    public Double getSpv() {
+    public Integer getSpv() {
         return spv;
     }
 
-    public void setSpv(Double spv) {
+    public void setSpv(Integer spv) {
         this.spv = spv;
     }
 
@@ -170,13 +171,7 @@ public class NewVisit {
         this.spn = spn;
     }
 
-    public String getStatP() {
-        return statP;
-    }
 
-    public void setStatP(String statP) {
-        this.statP = statP;
-    }
 
     public String getqG() {
         return qG;
@@ -330,11 +325,11 @@ public class NewVisit {
         this.parent = parent;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -364,7 +359,7 @@ public class NewVisit {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ns, vs, dats, sn, datps, codeMo, plOgrn, okatoOms, spv, sps, spn, statP, qG, novor, famp, imp, otp, polp, datrp, ksmo, naprMo, naprN, datn, dato, ishl, ishob, mp, summaI, pv, dvozvrat);
+        return Objects.hash(id, ns, vs, dats, sn, datps, codeMo, plOgrn, okatoOms, spv, sps, spn, qG, novor, famp, imp, otp, polp, datrp, ksmo, naprMo, naprN, datn, dato, ishl, ishob, mp, summaI, pv, dvozvrat);
     }
 
     @Override
@@ -385,7 +380,6 @@ public class NewVisit {
                 && Objects.equals(spv, otherVisit.getSpv())
                 && Objects.equals(sps, otherVisit.getSps())
                 && Objects.equals(spn, otherVisit.getSpn())
-                && Objects.equals(statP, otherVisit.getStatP())
                 && Objects.equals(qG, otherVisit.getqG())
                 && Objects.equals(novor, otherVisit.getNovor())
                 && Objects.equals(famp, otherVisit.getFamp())

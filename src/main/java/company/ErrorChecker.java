@@ -32,6 +32,8 @@ public class ErrorChecker {
     private String smo;
     @Resource(name = "spr69List")
     private List<Spr69Value> spr69List;
+    private List<Integer> spr69HashsWithMkb;
+    private List<Integer> spr69HashsWithOutMkb;
 
     public ErrorChecker() {
     }
@@ -236,7 +238,6 @@ public class ErrorChecker {
                 .collect(Collectors.toList()).stream().forEach(e -> errors.addError(e, "не указан тип полиса"));
     }
 
-
     private void checkMissedUslugi(List<String> uslugi, String obrashenie, String doctor, Collection<NewHuman> humanCollection) {
         for (NewHuman human : humanCollection) {
             for (NewVisit visit : human.getAllVisits().values()) {
@@ -396,12 +397,29 @@ public class ErrorChecker {
         }
     }
 
+    public void checkForIncorrectNaprMoCodeAndNumber(Collection<NewVisit> visits) {
+        for (NewVisit visit : visits) {
+            if (visit.getMp().equals("1")
+                    && (visit.getNaprMo().isEmpty() || visit.getNaprN().isEmpty())) {
+                errors.addError(visit, "неправильное МО или номер направления");
+            }
+        }
+    }
+
     void checkForIncorrectSpr69(Collection<NewVisit> visits) {
-        List<Integer> spr69HashsWithMkb = new ArrayList<>();
-        List<Integer> spr69HashsWithOutMkb = new ArrayList<>();
-        for (Spr69Value spr69Value : spr69List) {
-            spr69HashsWithMkb.add(Objects.hash(spr69Value.getKsgcode(), spr69Value.getKusl(), spr69Value.getMkbx()));
-            spr69HashsWithOutMkb.add(Objects.hash(spr69Value.getKsgcode(), spr69Value.getKusl()));
+        if (visits.isEmpty()) {
+            return;
+        }
+        if (!visits.stream().findFirst().get().getServices().stream().findFirst().get().getKusl().startsWith("G")) {
+            return;
+        }
+        if ((Objects.isNull(spr69HashsWithMkb) || Objects.isNull(spr69HashsWithOutMkb)) || (spr69HashsWithMkb.isEmpty() || spr69HashsWithOutMkb.isEmpty())) {
+            spr69HashsWithMkb = new ArrayList<>();
+            spr69HashsWithOutMkb = new ArrayList<>();
+            for (Spr69Value spr69Value : spr69List) {
+                spr69HashsWithMkb.add(Objects.hash(spr69Value.getKsgcode(), spr69Value.getKusl(), spr69Value.getMkbx()));
+                spr69HashsWithOutMkb.add(Objects.hash(spr69Value.getKsgcode(), spr69Value.getKusl()));
+            }
         }
         for (NewVisit visit : visits) {
             String operation = "";

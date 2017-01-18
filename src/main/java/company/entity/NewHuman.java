@@ -30,7 +30,7 @@ public class NewHuman implements Comparable<NewHuman> {
     //СНИЛС
     private String snils;
     //код типа документа, удостоверяющего личность (Код типа документа, серия и номер документа, удостоверяющего личность застрахованного по ОМС или представителя пациента (который может быть не застрахован по ОМС, но может представлять интересы пациента), заполняются в соответствии с кодификатором и шаблонами, приведенными в справочнике. Да (для инокраевых). При указании ЕНП может не заполняться. SPR43
-    private Double cDoc;
+    private Integer cDoc;
     //серия документа, удостоверяющего личность (Код типа документа, серия и номер документа, удостоверяющего личность застрахованного по ОМС или представителя пациента (который может быть не застрахован по ОМС, но может представлять интересы пациента), заполняются в соответствии с кодификатором и шаблонами, приведенными в справочнике. ) Да (для инокраевых, согласно SPR43).  При указании ЕНП может не заполняться.
     private String sDoc;
     //номер документа, удостоверяющего личность (Код типа документа, серия и номер документа, удостоверяющего личность застрахованного по ОМС или представителя пациента (который может быть не застрахован по ОМС, но может представлять интересы пациента), заполняются в соответствии с кодификатором и шаблонами, приведенными в справочнике. ) Да (для инокраевых, согласно SPR43).  При указании ЕНП может не заполняться.
@@ -38,7 +38,7 @@ public class NewHuman implements Comparable<NewHuman> {
     //номер амбулаторной карты или истории болезни
     private String isti = "";
     //Визиты
-    private Map<Double, NewVisit> visits = new LinkedHashMap<>();
+    private Map<Integer, NewVisit> visits = new LinkedHashMap<>();
 
     @Override
     public String toString() {
@@ -72,7 +72,8 @@ public class NewHuman implements Comparable<NewHuman> {
     public void removeVisit(NewVisit newVisit){
         visits.remove(newVisit.getSn());
     }
-    public Map<Double, NewVisit> getAllVisits(){
+
+    public Map<Integer, NewVisit> getAllVisits() {
         return visits;
     }
 
@@ -132,11 +133,11 @@ public class NewHuman implements Comparable<NewHuman> {
         this.snils = snils;
     }
 
-    public Double getcDoc() {
+    public Integer getcDoc() {
         return cDoc;
     }
 
-    public void setcDoc(Double cDoc) {
+    public void setcDoc(Integer cDoc) {
         this.cDoc = cDoc;
     }
 

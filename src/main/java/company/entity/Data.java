@@ -12,8 +12,8 @@ import java.util.Map;
 @Service
 public class Data {
     Map<String, NewHuman> mapNewHuman = new HashMap<>();
-    Map<Double, NewVisit> visitMap = new HashMap<>();
-    Map<Double, NewService> serviceMap = new HashMap<>();
+    Map<Integer, NewVisit> visitMap = new HashMap<>();
+    Map<Integer, NewService> serviceMap = new HashMap<>();
     Map<String, Doctor> doctorMap = new HashMap<>();
 
     public boolean containsHuman(String isti) {
@@ -40,7 +40,7 @@ public class Data {
         return visitMap.values();
     }
 
-    public NewVisit getVisitBySn(Double sn){
+    public NewVisit getVisitBySn(Integer sn) {
         return visitMap.get(sn);
     }
 
@@ -48,7 +48,7 @@ public class Data {
         return doctorMap.values();
     }
 
-    public NewService getServiceByUid(Double uid){
+    public NewService getServiceByUid(Integer uid) {
         return serviceMap.get(uid);
     }
 
@@ -72,7 +72,7 @@ public class Data {
         visitMap.clear();
     }
 
-    public boolean containsVisit(Double sn){
+    public boolean containsVisit(Integer sn) {
         return visitMap.containsKey(sn);
     }
 }

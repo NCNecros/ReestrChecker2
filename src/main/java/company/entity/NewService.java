@@ -5,16 +5,16 @@ import java.util.Objects;
 
 public class NewService {
     //уникальный номер записи об оказанной медицинской услуге в пределах реестра (Уникальный номер записи об оказанной медицинской услуге используется для идентификации записи о медицинской услуге в пределах реестра, для повторных реестров должен совпадать с первоначальным номером.)
-    private Double uid;
+    private Integer uid;
 
     //код МО, оказавшей медицинскую помощь SPR01
     private String codeMo;
 
     //номер реестра счетов
-    private Double ns;
+    private Integer ns;
 
     //номер персонального счета
-    private Double sn;
+    private Integer sn;
 
     //код отделения (Для услуг, выполненных вне данной МО (IS_OUT = “1”),  все обязательные реквизиты (код отделения, код профиля койки, код диагноза основного, и т.п.) заполняются данными на момент обращения в МО. , Заполняется данными из поля DOC_TABN на основании данных из файла DXXXXX.) SPR07
     private String kotd;
@@ -38,10 +38,10 @@ public class NewService {
     private String kusl;
 
     //количество услуг
-    private Double kolu;
+    private Integer kolu;
 
     //количество койко-дней (дней лечения) Да (для стационаров всех типов)
-    private Double kd;
+    private Integer kd;
 
     //дата начала выполнения услуги
     private Date datn;
@@ -57,7 +57,7 @@ public class NewService {
     private Double summ;
 
     //признак: услуга оказана в другой МО (Поле содержит значение “1”, если услуга оказана в другом медицинском учреждении, значение “0” в остальных случаях.)
-    private Double isOut;
+    private Integer isOut;
 
     //код МО, оказавшей услугу (Указывается код медицинской организации, выполнившей внешнюю услугу. Заполняется для тех случаев, если IS_OUT = “1”.) SPR01
     private String outMo;
@@ -80,11 +80,11 @@ public class NewService {
     private Long id;
     private NewVisit visit;
 
-    public Double getUid() {
+    public Integer getUid() {
         return uid;
     }
 
-    public void setUid(Double uid) {
+    public void setUid(Integer uid) {
         this.uid = uid;
     }
 
@@ -96,19 +96,19 @@ public class NewService {
         this.codeMo = codeMo;
     }
 
-    public Double getNs() {
+    public Integer getNs() {
         return ns;
     }
 
-    public void setNs(Double ns) {
+    public void setNs(Integer ns) {
         this.ns = ns;
     }
 
-    public Double getSn() {
+    public Integer getSn() {
         return sn;
     }
 
-    public void setSn(Double sn) {
+    public void setSn(Integer sn) {
         this.sn = sn;
     }
 
@@ -168,19 +168,19 @@ public class NewService {
         this.kusl = kusl;
     }
 
-    public Double getKolu() {
+    public Integer getKolu() {
         return kolu;
     }
 
-    public void setKolu(Double kolu) {
+    public void setKolu(Integer kolu) {
         this.kolu = kolu;
     }
 
-    public Double getKd() {
+    public Integer getKd() {
         return kd;
     }
 
-    public void setKd(Double kd) {
+    public void setKd(Integer kd) {
         this.kd = kd;
     }
 
@@ -217,11 +217,11 @@ public class NewService {
         this.summ = summ;
     }
 
-    public Double getIsOut() {
+    public Integer getIsOut() {
         return isOut;
     }
 
-    public void setIsOut(Double isOut) {
+    public void setIsOut(Integer isOut) {
         this.isOut = isOut;
     }
 
