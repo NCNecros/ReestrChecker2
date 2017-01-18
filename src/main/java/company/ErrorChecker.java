@@ -67,7 +67,8 @@ public class ErrorChecker {
                     // Проверка с разными врачами и одним диагнозом
                     // Boolean res = otherVisit.getMKB().equalsIgnoreCase(visit.getMKB());
                     Boolean res = otherVisit.getMKB().equalsIgnoreCase(visit.getMKB()) && otherVisit.getDoctor().equalsIgnoreCase(visit.getDoctor());
-                    Boolean spec = visit.getServices().stream().map(e -> e.getSpec()).findFirst().orElse("").equalsIgnoreCase(otherVisit.getServices().stream().map(e -> e.getSpec()).findFirst().orElse(" "));
+                    Boolean spec = visit.getServices().stream().map(NewService::getSpec).findFirst().orElse("")
+                            .equalsIgnoreCase(otherVisit.getServices().stream().map(NewService::getSpec).findFirst().orElse(""));
                     if (((visit.getMKB().equalsIgnoreCase(otherVisit.getMKB()) && spec) || res) && visit.getServices().stream().anyMatch(e -> !e.getKusl().startsWith("B04"))) {
                         errors.addError(visit, "содержит более одного обращения");
                     }

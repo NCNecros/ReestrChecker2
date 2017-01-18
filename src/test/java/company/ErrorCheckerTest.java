@@ -78,12 +78,14 @@ public class ErrorCheckerTest {
         NewVisit visitOne = new NewVisit();
         visitOne.setSn(12);
         NewService serviceOne = getServiceByTabnAndMkb("111", "O20.0", "B01.001");
+        serviceOne.setSpec("1124");
         visitOne.addService(serviceOne);
         human.addVisit(visitOne);
 
         NewVisit visitTwo = new NewVisit();
         visitTwo.setSn(13);
         NewService serviceTwo = getServiceByTabnAndMkb("111", "O20.0", "B01.001");
+        serviceTwo.setSpec("1124");
         visitTwo.addService(serviceTwo);
         human.addVisit(visitTwo);
         List<NewHuman> newHumans = new ArrayList<>();
@@ -101,12 +103,14 @@ public class ErrorCheckerTest {
         NewVisit visitOne = new NewVisit();
         visitOne.setSn(12);
         NewService serviceOne = getServiceByTabnAndMkb("111", "O20.0", "B01.001");
+        serviceOne.setSpec("1124");
         visitOne.addService(serviceOne);
         human.addVisit(visitOne);
 
         NewVisit visitTwo = new NewVisit();
         visitTwo.setSn(13);
         NewService serviceTwo = getServiceByTabnAndMkb("111", "O21.0", "B01.001");
+        serviceTwo.setSpec("1124");
         visitTwo.addService(serviceTwo);
         human.addVisit(visitTwo);
         List<NewHuman> newHumans = new ArrayList<>();
@@ -125,12 +129,14 @@ public class ErrorCheckerTest {
         NewVisit visitOne = new NewVisit();
         visitOne.setSn(12);
         NewService serviceOne = getServiceByTabnAndMkb("111", "O20.0", "B01.001");
+        serviceOne.setSpec("1124");
         visitOne.addService(serviceOne);
         human.addVisit(visitOne);
 
         NewVisit visitTwo = new NewVisit();
         visitTwo.setSn(13);
         NewService serviceTwo = getServiceByTabnAndMkb("111", "O20.0", "B01.002");
+        serviceTwo.setSpec("1124");
         visitTwo.addService(serviceTwo);
         human.addVisit(visitTwo);
         List<NewHuman> newHumans = new ArrayList<>();
@@ -219,6 +225,7 @@ public class ErrorCheckerTest {
         NewVisit visit = new NewVisit();
         human.addVisit(visit);
         NewService serviceOne = new NewService();
+        serviceOne.setMkbх("Z00.0");
         visit.addService(serviceOne);
         NewService serviceTwo = new NewService();
         visit.addService(serviceTwo);
@@ -332,12 +339,14 @@ public class ErrorCheckerTest {
         NewVisit visitOne = new NewVisit();
         visitOne.setSn(12);
         NewService serviceOne = getServiceByTabnAndMkb("111", "Z00.0", "B04.001");
+        serviceOne.setSpec("1124");
         visitOne.addService(serviceOne);
         human.addVisit(visitOne);
 
         NewVisit visitTwo = new NewVisit();
         visitTwo.setSn(13);
         NewService serviceTwo = getServiceByTabnAndMkb("111", "Z00.0", "B04.001");
+        serviceTwo.setSpec("1124");
         visitTwo.addService(serviceTwo);
         human.addVisit(visitTwo);
 
