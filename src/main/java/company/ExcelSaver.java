@@ -80,9 +80,4 @@ public class ExcelSaver {
             throw new IOException("Ошибка записи файла с ошибками: " + e.getLocalizedMessage());
         }
     }
-
-    private Integer getSnFromString(String string) {
-        return Integer.parseInt(string.split("[()]")[1]);
-    }
-
 }

@@ -78,8 +78,15 @@ public class ControllerHelper {
             if (files.isEmpty()) {
                 logger.error("Ни один файл не найден");
             }
+            errors.clear();
             for (File f : files) {
                 processFile(f);
+            }
+
+            try {
+                saver.saveErrorsToExcel(errors, dir + File.separator + "Ошибки.xls");
+            } catch (IOException e) {
+                logger.error(e.getMessage());
             }
         }
     }
@@ -104,39 +111,36 @@ public class ControllerHelper {
         helper.readFromD(dFile.toString());
 
         helper.readFromSpr69();
-
-        errors.clear();
         checkForErrors(file);
 
         String pathToFile = file.getParentFile().getAbsolutePath();
         String fileName = file.getName().replace(".zip", "");
 
-        try {
-            saver.saveErrorsToExcel(errors, pathToFile + File.separator + fileName + "_ошибки.xls");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+
         logger.info(fileName + " проверка завершена");
     }
 
     private void check() {
         try {
             String codeMo = data.getVisits().stream().findFirst().orElseThrow(NoSuchElementException::new).getCodeMo();
-//            errorChecker.checkForIncorrectDoctorSnils(data.getDoctors());
-//            errorChecker.checkForIncorrectDoctorDant(data.getDoctors());
-            errorChecker.checkForIncorrectNaprMoCodeAndNumber(data.getVisits());
+            errorChecker.checkForIncorrectDoctorSnils(data.getDoctors());//Неправильный снисл врача
+            errorChecker.checkForIncorrectDoctorDant(data.getDoctors());//Некорректная дата начала работы врача
+//            errorChecker.checkForIncorrectNaprMoCodeAndNumber(data.getVisits());//
 //            errorChecker.checkForIncorrectSpr69(data.getVisits());
+//            errorChecker.checkForError903(data.getVisits());
+//            errorChecker.checkForRedundantService(data.getHumans());//Обращение добавлено некорректно
+//            errorChecker.checkForMoreThanOneVisit(data.getHumans());//307
             if (codeMo.equals("06008")) {
 //                errorChecker.checkForIncorrectSpecForChildrenStac(data.getServices());
 //                errorChecker.checkForIncorrectSpecAndProfilStac(data.getServices());
             } else if (codeMo.equals("06006") || codeMo.equals("06005") || codeMo.equals("06007")) {
-                errorChecker.checkForMoreThanOneVisit(data.getHumans());
-                errorChecker.checkForMissedService(data.getHumans());
-                errorChecker.checkForRedundantService(data.getHumans());
-                errorChecker.checkForIncorrectAgeForThisMKBWhenAgeIsIncorrect(data.getServices());
+//                errorChecker.checkForMoreThanOneVisit(data.getHumans());
+//                errorChecker.checkForMissedService(data.getHumans());
+//                errorChecker.checkForRedundantService(data.getHumans());
+//                errorChecker.checkForIncorrectAgeForThisMKBWhenAgeIsIncorrect(data.getServices());
             } else if (codeMo.equals("06020") || codeMo.equals("06021")) {
-                errorChecker.checkForIncorrectMKBAtDispan(data.getServices());
-                errorChecker.checkForIncorrectDateForUslugaDispan(data.getVisits());
+//                errorChecker.checkForIncorrectMKBAtDispan(data.getServices());
+//                errorChecker.checkForIncorrectDateForUslugaDispan(data.getVisits());
             }
         } catch (NoSuchElementException e) {
             System.err.println("Ошибка, не удалось определить код медицинской организации");

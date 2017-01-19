@@ -1,5 +1,6 @@
 package company.entity;
 
+import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -79,6 +80,8 @@ public class NewVisitTest {
         visit2.setSummaI(1d);
         visit2.setVs("123");
         Assert.assertEquals(visit1,visit2);
+        visit2 = null;
+        Assert.assertNotEquals(visit1, visit2);
     }
 
     @Test
@@ -96,5 +99,12 @@ public class NewVisitTest {
         Assert.assertTrue(visit.containsKusl("A06.30.001"));
         Assert.assertFalse(visit.containsKusl("A06.30.003"));
 
+    }
+
+    @Test
+    public void testGetReadableDatN() {
+        NewVisit visit = new NewVisit();
+        visit.setDatn(new LocalDate(2015, 2, 1).toDate());
+        Assert.assertEquals(visit.getReadableDatN(), "01.02.2015");
     }
 }

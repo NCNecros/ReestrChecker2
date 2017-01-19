@@ -353,6 +353,9 @@ public class NewVisit {
     }
 
     public String getReadableDatN() {
+        if (Objects.isNull(datn)) {
+            return "";
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         return sdf.format(datn);
     }

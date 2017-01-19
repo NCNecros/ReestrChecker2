@@ -14,6 +14,7 @@ public class Error implements Comparable<Error> {
     private NewService service;
     private String error;
     private String description;
+
     public Error(NewHuman human, String error) {
         this.human = human;
         this.error = error;
@@ -28,11 +29,13 @@ public class Error implements Comparable<Error> {
         this.human = human;
         this.error = error;
     }
+
     public Error(NewVisit visit, String error) {
         this.human = visit.getParent();
         this.visit = visit;
         this.error = error;
     }
+
     public Error(NewService service, String error) {
         this.human = service.getVisit().getParent();
         this.visit = service.getVisit();
@@ -56,16 +59,19 @@ public class Error implements Comparable<Error> {
         return error;
     }
 
-    @Override
+
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
+        Boolean result = true;
         Error error1 = (Error) o;
-        return Objects.equals(human.getFullName(),error1.getHuman().getFullName())
-                && Objects.equals(human.getReadableDatr(), error1.getHuman().getReadableDatr())
-                && Objects.equals(visit.getReadableDatN(), error1.visit.getReadableDatN())
-                && Objects.equals(error, error1.error);
+        result = Objects.equals(human.getFullName(), error1.getHuman().getFullName());
+        result &= Objects.equals(human.getReadableDatr(), error1.getHuman().getReadableDatr());
+        if (Objects.nonNull(visit) && Objects.nonNull(error1.visit)) {
+            result &= Objects.equals(visit.getReadableDatN(), error1.visit.getReadableDatN());
+        }
+        result &= Objects.equals(error, error1.error);
+        return result;
     }
 
     @Override
@@ -82,15 +88,15 @@ public class Error implements Comparable<Error> {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("human",human)
-                .add("visit",visit)
-                .add("error",error).toString();
+                .add("human", human)
+                .add("visit", visit)
+                .add("error", error).toString();
     }
 
     @Override
     public int compareTo(Error o) {
         Error otherError = (Error) o;
-        return ComparisonChain.start().compare(human,otherError.getHuman()).compare(error,otherError.getError()).result();
+        return ComparisonChain.start().compare(human, otherError.getHuman()).compare(error, otherError.getError()).result();
     }
 
     public String getDescription() {

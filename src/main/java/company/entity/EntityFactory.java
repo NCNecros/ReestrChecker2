@@ -4,6 +4,7 @@ import company.Spr69Value;
 import org.jamel.dbf.structure.DbfRow;
 
 import java.nio.charset.Charset;
+import java.util.Date;
 
 /**
  * Фабрика сущностей
@@ -18,7 +19,7 @@ public class EntityFactory {
         human.setIma(row.getString("IMA", CHARSET));
         human.setOtch(row.getString("OTCH", CHARSET));
         human.setPol(row.getString("POL", CHARSET));
-        human.setDatr(row.getDate("DATR"));
+        human.setDatr(getDate(row,"DATR"));
         human.setKat(row.getString("KAT", CHARSET));
         human.setSnils(row.getString("SNILS", CHARSET));
         human.setcDoc(row.getInt("C_DOC"));
@@ -39,8 +40,8 @@ public class EntityFactory {
         value.setDlit(row.getString("DLIT", CHARSET));
         value.setKsgcode(row.getString("KSGCODE", CHARSET));
         value.setKsgkoef(row.getDouble("KSGKOEF"));
-        value.setDatn(row.getDate("DATN"));
-        value.setDato(row.getDate("DATO"));
+        value.setDatn(getDate(row,"DATN"));
+        value.setDato(getDate(row,"DATO"));
         return value;
     }
 
@@ -53,19 +54,27 @@ public class EntityFactory {
         doctor.setIma(row.getString("IMA", CHARSET));
         doctor.setOtch(row.getString("OTCH", CHARSET));
         doctor.setPol(row.getString("POL", CHARSET));
-        doctor.setDatr(row.getDate("DATR"));
-        doctor.setDatn(row.getDate("DATN"));
-        doctor.setDato(row.getDate("DATO"));
+        doctor.setDatr(getDate(row,"DATR"));
+        doctor.setDatn(getDate(row, "DATN"));
+        doctor.setDato(getDate(row, "DATO"));
         return doctor;
+    }
+
+    private static Date getDate(DbfRow row, String fieldName) {
+        Date date = row.getDate(fieldName);
+        if (date.getTime() == -623616120000000L) {
+            return null;
+        }
+        return date;
     }
 
     public static NewVisit buildVisitFromRow(DbfRow row) {
         NewVisit visit = new NewVisit();
         visit.setNs(row.getInt("NS"));
         visit.setVs(row.getString("VS", CHARSET));
-        visit.setDats(row.getDate("DATS"));
+        visit.setDats(getDate(row,"DATS"));
         visit.setSn(row.getInt("SN"));
-        visit.setDatps(row.getDate("DATPS"));
+        visit.setDatps(getDate(row,"DATPS"));
         visit.setCodeMo(row.getString("CODE_MO", CHARSET));
         visit.setPlOgrn(row.getString("PL_OGRN", CHARSET));
         visit.setOkatoOms(row.getString("OKATO_OMS", CHARSET));
@@ -79,17 +88,17 @@ public class EntityFactory {
         visit.setImp(row.getString("IMP", CHARSET));
         visit.setOtp(row.getString("OTP", CHARSET));
         visit.setPolp(row.getString("POLP", CHARSET));
-        visit.setDatrp(row.getDate("DATRP"));
+        visit.setDatrp(getDate(row,"DATRP"));
         visit.setNaprMo(row.getString("NAPR_MO", CHARSET));
         visit.setNaprN(row.getString("NAPR_N", CHARSET));
-        visit.setDatn(row.getDate("DATN"));
-        visit.setDato(row.getDate("DATO"));
+        visit.setDatn(getDate(row,"DATN"));
+        visit.setDato(getDate(row,"DATO"));
         visit.setIshl(row.getString("ISHL", CHARSET));
         visit.setIshob(row.getString("ISHOB", CHARSET));
         visit.setMp(row.getString("MP", CHARSET));
         visit.setSummaI(row.getDouble("SUMMA_I"));
         visit.setPv(row.getString("PV", CHARSET));
-        visit.setDvozvrat(row.getDate("DVOZVRAT"));
+        visit.setDvozvrat(getDate(row,"DVOZVRAT"));
         return visit;
     }
 
@@ -103,13 +112,14 @@ public class EntityFactory {
         service.setKpk(row.getString("KPK", CHARSET));
         service.setMkbх(row.getString("MKBX", CHARSET));
         service.setMkbхs(row.getString("MKBXS", CHARSET));
-        service.setKstand(row.getString("KSTAND", CHARSET));
+
+//        service.setKstand(row.getString("KSTAND", CHARSET)); //deprecated
         service.setVp(row.getString("VP", CHARSET));
         service.setKusl(row.getString("KUSL", CHARSET));
         service.setKolu(row.getInt("KOLU"));
         service.setKd(row.getInt("KD"));
-        service.setDatn(row.getDate("DATN"));
-        service.setDato(row.getDate("DATO"));
+        service.setDatn(getDate(row,"DATN"));
+        service.setDato(getDate(row,"DATO"));
         service.setTaru(row.getDouble("TARU"));
         service.setSumm(row.getDouble("SUMM"));
         service.setIsOut(row.getInt("IS_OUT"));

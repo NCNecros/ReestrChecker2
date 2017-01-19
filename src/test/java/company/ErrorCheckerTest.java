@@ -60,6 +60,37 @@ public class ErrorCheckerTest {
         service.setSpec("1134");
         errorChecker.checkForIncorrectVMP(Collections.singletonList(service));
         verify(listOfError).addError(service, "Некорректный вид МП");
+        service.setSpec("1122");
+        errorChecker.checkForIncorrectVMP(Collections.singletonList(service));
+        verify(listOfError, times(2)).addError(service, "Некорректный вид МП");
+
+    }
+
+    @Test
+    public void testError903IfIshobIsCorrect() {
+        NewVisit visit = new NewVisit();
+        for (Map.Entry<String, List<String>> elem : errorChecker.getIshobIshl().entrySet()) {
+            visit.setIshob(elem.getKey());
+            for (String s : elem.getValue()) {
+                visit.setIshl(s);
+                errorChecker.checkForError903(Collections.singletonList(visit));
+                verify(listOfError, never()).addError(visit, "иход лечения не соответствует исходу обращения");
+            }
+        }
+    }
+
+    @Test
+
+    public void testError903IfIshobIsIncorrect() {
+        for (Map.Entry<String, List<String>> elem : errorChecker.getIshobIshl().entrySet()) {
+            for (String s : elem.getValue()) {
+                NewVisit visit = new NewVisit();
+                visit.setIshob(elem.getKey());
+                visit.setIshl(s + "0");
+                errorChecker.checkForError903(Collections.singletonList(visit));
+                verify(listOfError).addError(visit, "иход лечения не соответствует исходу обращения");
+            }
+        }
     }
 
     private NewHuman getCorrectHuman() {

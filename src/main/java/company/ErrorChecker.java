@@ -32,8 +32,8 @@ public class ErrorChecker {
     private String smo;
     @Resource(name = "spr69List")
     private List<Spr69Value> spr69List;
-    private List<Integer> spr69HashsWithMkb;
-    private List<Integer> spr69HashsWithOutMkb;
+    private List<String> spr69HashsWithMkb;
+    private List<String> spr69HashsWithOutMkb;
 
     public ErrorChecker() {
     }
@@ -50,7 +50,9 @@ public class ErrorChecker {
      * Проверка на некорректно заполненное поле ВМП
      */
     public void checkForIncorrectVMP(Collection<NewService> serviceCollection) {
-        serviceCollection.stream().filter(e -> (e.getSpec().equals("1134") || e.getSpec().equals("1122")) && !e.getVmp().equals("12")).forEach(e -> errors.addError(e, "Некорректный вид МП"));
+        serviceCollection.stream()
+                .filter(e -> (e.getSpec().equals("1134") || e.getSpec().equals("1122")) && !e.getVmp().equals("12"))
+                .forEach(e -> errors.addError(e, "Некорректный вид МП"));
     }
 
     /**
@@ -70,7 +72,7 @@ public class ErrorChecker {
                     Boolean spec = visit.getServices().stream().map(NewService::getSpec).findFirst().orElse("")
                             .equalsIgnoreCase(otherVisit.getServices().stream().map(NewService::getSpec).findFirst().orElse(""));
                     if (((visit.getMKB().equalsIgnoreCase(otherVisit.getMKB()) && spec) || res) && visit.getServices().stream().anyMatch(e -> !e.getKusl().startsWith("B04"))) {
-                        errors.addError(visit, "содержит более одного обращения");
+                        errors.addError(visit, "(307) содержит более одного обращения");
                     }
                 }
             }
@@ -148,11 +150,15 @@ public class ErrorChecker {
      */
     @Deprecated
     public void checkForIncorrectOkato(Collection<NewVisit> visitCollection) {
-        visitCollection.stream().filter(newVisit -> newVisit.getOkatoOms().isEmpty() && newVisit.getPlOgrn().equals(TFOMS_OGRN)).collect(Collectors.toList())
-                .stream().forEach(newVisit1 -> errors.addError(newVisit1, "не указана территория для инокраевого"));
+        visitCollection.stream().filter(newVisit -> newVisit.getOkatoOms().isEmpty() && newVisit.getPlOgrn().equals(TFOMS_OGRN)).collect(Collectors.toList()).forEach(newVisit1 -> errors.addError(newVisit1, "не указана территория для инокраевого"));
     }
 
     private boolean ishobIsCorrect(NewVisit visit) {
+        Map<String, List<String>> ishobIshlMap = getIshobIshl();
+        return (ishobIshlMap.get(visit.getIshob()).contains(visit.getIshl()));
+    }
+
+    public Map<String, List<String>> getIshobIshl() {
         Map<String, List<String>> ishobIshlMap = new HashMap<>(20);
         ishobIshlMap.put("101", Arrays.asList("101", "102"));
         ishobIshlMap.put("102", Arrays.asList("102", "103", "104"));
@@ -199,8 +205,7 @@ public class ErrorChecker {
         ishobIshlMap.put("404", Arrays.asList("402", "403"));
         ishobIshlMap.put("405", Collections.singletonList("404"));
         ishobIshlMap.put("406", Collections.singletonList("404"));
-
-        return (ishobIshlMap.get(visit.getIshob()).contains(visit.getIshl()));
+        return ishobIshlMap;
     }
 
     /**
@@ -209,7 +214,7 @@ public class ErrorChecker {
     public void checkForError903(Collection<NewVisit> visitCollection) {
         visitCollection.stream().filter(
                 newVisit -> !ishobIsCorrect(newVisit)
-        ).forEach(newVisit -> errors.addError(newVisit, "иход лечения не соответствует исходу обращения"));
+        ).forEach(newVisit -> errors.addError(newVisit, "903 исход лечения не соответствует исходу обращения"));
     }
 
     /**
@@ -223,7 +228,6 @@ public class ErrorChecker {
                 newVisit ->
                         (newVisit.getSpv() == 3 && newVisit.getSpn().length() != 16) ||
                                 (newVisit.getSpv() == 2 && newVisit.getSpn().length() != 9)).collect(Collectors.toList()).stream().forEach(e -> errors.addError(e, "некорректно заполнен номер полиса"));
-
     }
 
 
@@ -235,18 +239,21 @@ public class ErrorChecker {
     @Deprecated
     public void checkForIncorrectPolisType(Collection<NewVisit> visitCollection) {
         visitCollection.stream()
-                .filter(newVisit -> !(newVisit.getSpv() == 3 || newVisit.getSpv() == 2 || newVisit.getSpv() == 1 || newVisit.getSpv() == 4))
-                .collect(Collectors.toList()).stream().forEach(e -> errors.addError(e, "не указан тип полиса"));
+                .filter(newVisit -> !Arrays.asList(1, 2, 3, 4).contains(newVisit.getSpv()))
+                .collect(Collectors.toList()).forEach(e -> errors.addError(e, "не указан тип полиса"));
     }
 
     private void checkMissedUslugi(List<String> uslugi, String obrashenie, String doctor, Collection<NewHuman> humanCollection) {
         for (NewHuman human : humanCollection) {
             for (NewVisit visit : human.getAllVisits().values()) {
                 List<String> services = visit.getServices().stream().map(NewService::getKusl).collect(Collectors.toList());
-                if (services.size() > 1 && (CollectionUtils.containsAny(services, uslugi)) && !services.contains(obrashenie)) {
-//                    if (!visit.getMKB().equalsIgnoreCase("Z34.0")&&!visit.getMKB().equalsIgnoreCase("O99.8")) {
-                    if (!visit.getMKB().equalsIgnoreCase("Z34.0")) {
-                        errors.addError(visit, "отсутствует обращение к врач-" + doctor);
+                if (services.size() > 1) {
+                    if (CollectionUtils.containsAny(services, uslugi)) {
+                        if (!services.contains(obrashenie)) {
+                            if (!visit.getMKB().equalsIgnoreCase("Z34.0")) {
+                                errors.addError(visit, "отсутствует обращение к врач-" + doctor);
+                            }
+                        }
                     }
                 }
             }
@@ -307,8 +314,12 @@ public class ErrorChecker {
      */
     public void checkForIncorrectMKBAtDispan(Collection<NewService> services) {
         for (NewService service : services) {
-            if (!service.getSpec().isEmpty() && service.getMkbх().isEmpty() && !service.getKusl().equals("A06.09.006") && service.getKusl().startsWith("B04.047")) {
-                errors.addError(service, "отсутствует МКБ");
+            if (!service.getSpec().isEmpty()) {
+                if (service.getMkbх().isEmpty()) {
+                    if (service.getKusl().startsWith("B04.047")) {
+                        errors.addError(service, "отсутствует МКБ");
+                    }
+                }
             }
         }
     }
@@ -323,8 +334,10 @@ public class ErrorChecker {
             if (visit.getServices().stream().filter(e -> e.getKusl().equalsIgnoreCase("A01.30.009")).count() > 0) {
                 NewService serviceA = visit.getServices().stream().filter(e -> e.getKusl().equalsIgnoreCase("A01.30.009")).findFirst().get();
                 for (NewService service : visit.getServices()) {
-                    if (!service.getDocTabn().isEmpty() && service.getDatn().before(serviceA.getDato())) {
-                        errors.addError(visit, "содержит услугу раньше анкетирования");
+                    if (!service.getDocTabn().isEmpty()) {
+                        if (service.getDatn().before(serviceA.getDato())) {
+                            errors.addError(visit, "содержит услугу раньше анкетирования");
+                        }
                     }
                 }
             }
@@ -337,7 +350,7 @@ public class ErrorChecker {
     }
 
     /**
-     * Проверка на соответсвие возраста пациента и специальности врача
+     * Проверка на соответствие возраста пациента и специальности врача
      *
      * @param services
      */
@@ -376,8 +389,10 @@ public class ErrorChecker {
      */
     public void checkForIncorrectSpecAndProfilStac(Collection<NewService> services) {
         for (NewService service : services) {
-            if (service.getSpec().equalsIgnoreCase("22") && !service.getProfil().equalsIgnoreCase("68")) {
-                errors.addError(service, "(" + service.getUid().intValue() + ") несоответствие специальности и профиля д.б. педиатрия(22|68)");
+            if (service.getSpec().equalsIgnoreCase("22")) {
+                if (!service.getProfil().equalsIgnoreCase("68")) {
+                    errors.addError(service, "(" + service.getUid().intValue() + ") несоответствие специальности и профиля д.б. педиатрия(22|68)");
+                }
             }
         }
     }
@@ -400,13 +415,16 @@ public class ErrorChecker {
 
     public void checkForIncorrectNaprMoCodeAndNumber(Collection<NewVisit> visits) {
         for (NewVisit visit : visits) {
-            if (visit.getMp().equals("1")
-                    && (visit.getNaprMo().isEmpty() || visit.getNaprN().isEmpty())) {
-                errors.addError(visit, "неправильное МО или номер направления");
+            if (visit.getMp().equals("1")) {
+                if (visit.getNaprMo().isEmpty() || visit.getNaprN().isEmpty()) {
+                    errors.addError(visit, "неправильное МО или номер направления");
+                }
             }
         }
     }
 
+    // TODO: 07.02.2017 Неправильно сделанная логика. Пересмотреть
+    @Deprecated
     void checkForIncorrectSpr69(Collection<NewVisit> visits) {
         if (visits.isEmpty()) {
             return;
@@ -414,12 +432,15 @@ public class ErrorChecker {
         if (!visits.stream().findFirst().get().getServices().stream().findFirst().get().getKusl().startsWith("G")) {
             return;
         }
-        if ((Objects.isNull(spr69HashsWithMkb) || Objects.isNull(spr69HashsWithOutMkb)) || (spr69HashsWithMkb.isEmpty() || spr69HashsWithOutMkb.isEmpty())) {
+        if ((Objects.isNull(spr69HashsWithMkb)
+                || Objects.isNull(spr69HashsWithOutMkb))
+                || (spr69HashsWithMkb.isEmpty()
+                || spr69HashsWithOutMkb.isEmpty())) {
             spr69HashsWithMkb = new ArrayList<>();
             spr69HashsWithOutMkb = new ArrayList<>();
             for (Spr69Value spr69Value : spr69List) {
-                spr69HashsWithMkb.add(Objects.hash(spr69Value.getKsgcode(), spr69Value.getKusl(), spr69Value.getMkbx()));
-                spr69HashsWithOutMkb.add(Objects.hash(spr69Value.getKsgcode(), spr69Value.getKusl()));
+                spr69HashsWithMkb.add(spr69Value.getKsgcode() + spr69Value.getKusl() + spr69Value.getMkbx());
+                spr69HashsWithOutMkb.add(spr69Value.getKsgcode() + spr69Value.getKusl());
             }
         }
         for (NewVisit visit : visits) {
@@ -433,7 +454,7 @@ public class ErrorChecker {
                     ksg = service.getKusl();
                 }
             }
-            if (!(spr69HashsWithMkb.contains(Objects.hash(ksg, operation, mkb)) && spr69HashsWithOutMkb.contains(Objects.hash(ksg, operation)))) {
+            if (!(spr69HashsWithMkb.contains(ksg + operation + mkb) && spr69HashsWithOutMkb.contains(ksg + operation))) {
                 errors.addError(visit, "КСГ не соответствует SPR69");
             }
         }
