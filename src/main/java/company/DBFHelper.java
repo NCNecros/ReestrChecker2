@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,6 +27,14 @@ public class DBFHelper {
 
     public DBFHelper(DataFiller dataFiller) {
         this.dataFiller = dataFiller;
+    }
+
+    public List<Spr69Value> getSpr69List() {
+        return spr69List;
+    }
+
+    public void setSpr69List(List<Spr69Value> spr69List) {
+        this.spr69List = spr69List;
     }
 
     void readFromP(String filename/*, Map<String, Human> humanMap*/) throws FileNotFoundException {
@@ -60,9 +69,12 @@ public class DBFHelper {
     void readFromSpr69() throws FileNotFoundException {
         DbfRow row;
         reader = new DbfReader(new FileInputStream(getClass().getClassLoader().getResource("SPR69.dbf").getFile()));
+        if (spr69List == null) {
+            spr69List = new ArrayList<>(100000);
 
-        while ((row = reader.nextRow()) != null) {
-            spr69List.add(EntityFactory.buildSpr69ValueFromRow(row));
+            while ((row = reader.nextRow()) != null) {
+                spr69List.add(EntityFactory.buildSpr69ValueFromRow(row));
+            }
         }
     }
 }
