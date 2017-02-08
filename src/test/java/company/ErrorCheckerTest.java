@@ -22,7 +22,11 @@ public class ErrorCheckerTest {
         listOfError = mock(ListOfError.class);
         uslugi307List = mock(Uslugi307List.class);
         mkb = mock(Set.class);
+        DBFHelper helper = new DBFHelper();
+        helper.readFromSpr69();
+        List<Spr69Value> spr69List = helper.getSpr69List();
         errorChecker = new ErrorChecker(listOfError, uslugi307List, mkb, null);
+        errorChecker.setSpr69List(spr69List);
     }
 
     @Test
@@ -362,7 +366,6 @@ public class ErrorCheckerTest {
     }
 
 
-
     @Test
     public void testCheckForMoreThanOneVisitWhenMKBIsSameAndKuslIsProfilactic() {
         NewHuman human = getCorrectHuman();
@@ -445,4 +448,62 @@ public class ErrorCheckerTest {
         return service;
     }
 
+    @Test
+    public void testCheckForError347WhenVisitIsCorrect(){
+        NewVisit visit = new NewVisit();
+        NewService ksg = new NewService();
+        NewService operation = new NewService();
+        ksg.setKusl("G10.2516.179");
+        ksg.setMkbх("I87.0");
+        operation.setKusl("A06.12.036");
+        operation.setMkbх("I87.0");
+        visit.addService(ksg);
+        visit.addService(operation);
+
+        errorChecker.checkForIncorrectSpr69(Collections.singletonList(visit));
+
+        verify(listOfError, never()).addError(visit, "КСГ не соответствует SPR69");
+    }
+
+    @Test
+    public void testCheckForError347WhenVisitHasIncorrectMKB(){
+        NewVisit visit = new NewVisit();
+        NewService ksg = new NewService();
+        NewService operation = new NewService();
+        ksg.setKusl("G10.2516.179");
+        ksg.setMkbх("I87.1");
+        operation.setKusl("A06.12.036");
+        operation.setMkbх("I87.1");
+        visit.addService(ksg);
+        visit.addService(operation);
+
+        errorChecker.checkForIncorrectSpr69(Collections.singletonList(visit));
+
+        verify(listOfError).addError(visit, "КСГ не соответствует SPR69");
+
+    }
+    @Test
+    public void testCheckForError347WhenVisitIsCorrectWithoutOperationButWithMKB(){
+        NewVisit visit = new NewVisit();
+        NewService ksg = new NewService();
+        ksg.setKusl("G10.2516.176");
+        ksg.setMkbх("I80.0");
+        visit.addService(ksg);
+
+        errorChecker.checkForIncorrectSpr69(Collections.singletonList(visit));
+
+        verify(listOfError,never()).addError(visit, "КСГ не соответствует SPR69");
+    }
+    @Test
+    public void testCheckForError347WhenVisitIsIncorrectWithoutOperationAndWithIncorrectMKB(){
+        NewVisit visit = new NewVisit();
+        NewService ksg = new NewService();
+        ksg.setKusl("G10.2516.176");
+        ksg.setMkbх("I66.0");
+        visit.addService(ksg);
+
+        errorChecker.checkForIncorrectSpr69(Collections.singletonList(visit));
+
+        verify(listOfError).addError(visit, "КСГ не соответствует SPR69");
+    }
 }
