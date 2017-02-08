@@ -126,7 +126,7 @@ public class ControllerHelper {
             errorChecker.checkForIncorrectDoctorSnils(data.getDoctors());//Неправильный снисл врача
             errorChecker.checkForIncorrectDoctorDant(data.getDoctors());//Некорректная дата начала работы врача
 //            errorChecker.checkForIncorrectNaprMoCodeAndNumber(data.getVisits());//
-//            errorChecker.checkForIncorrectSpr69(data.getVisits());
+            errorChecker.checkForIncorrectKSG347(data.getVisits());
 //            errorChecker.checkForError903(data.getVisits());
 //            errorChecker.checkForRedundantService(data.getHumans());//Обращение добавлено некорректно
 //            errorChecker.checkForMoreThanOneVisit(data.getHumans());//307

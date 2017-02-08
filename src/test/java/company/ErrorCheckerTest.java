@@ -460,7 +460,7 @@ public class ErrorCheckerTest {
         visit.addService(ksg);
         visit.addService(operation);
 
-        errorChecker.checkForIncorrectSpr69(Collections.singletonList(visit));
+        errorChecker.checkForIncorrectKSG347(Collections.singletonList(visit));
 
         verify(listOfError, never()).addError(visit, "КСГ не соответствует SPR69");
     }
@@ -477,7 +477,7 @@ public class ErrorCheckerTest {
         visit.addService(ksg);
         visit.addService(operation);
 
-        errorChecker.checkForIncorrectSpr69(Collections.singletonList(visit));
+        errorChecker.checkForIncorrectKSG347(Collections.singletonList(visit));
 
         verify(listOfError).addError(visit, "КСГ не соответствует SPR69");
 
@@ -490,7 +490,7 @@ public class ErrorCheckerTest {
         ksg.setMkbх("I80.0");
         visit.addService(ksg);
 
-        errorChecker.checkForIncorrectSpr69(Collections.singletonList(visit));
+        errorChecker.checkForIncorrectKSG347(Collections.singletonList(visit));
 
         verify(listOfError,never()).addError(visit, "КСГ не соответствует SPR69");
     }
@@ -502,7 +502,7 @@ public class ErrorCheckerTest {
         ksg.setMkbх("I66.0");
         visit.addService(ksg);
 
-        errorChecker.checkForIncorrectSpr69(Collections.singletonList(visit));
+        errorChecker.checkForIncorrectKSG347(Collections.singletonList(visit));
 
         verify(listOfError).addError(visit, "КСГ не соответствует SPR69");
     }

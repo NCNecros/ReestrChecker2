@@ -429,7 +429,7 @@ public class ErrorChecker {
      * Проверка на ошибку 347 "Указанные КСГ не соответствует страховому случаю SPR69, SPR70
      * @param visits
      */
-    void checkForIncorrectSpr69(Collection<NewVisit> visits) {
+    void checkForIncorrectKSG347(Collection<NewVisit> visits) {
         if (visits.isEmpty()) {
             return;
         }
