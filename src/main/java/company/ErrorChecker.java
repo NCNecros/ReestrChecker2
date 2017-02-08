@@ -424,26 +424,28 @@ public class ErrorChecker {
     }
 
     // TODO: 07.02.2017 Неправильно сделанная логика. Пересмотреть
-    @Deprecated
+
+    /**
+     * Проверка на ошибку 347 "Указанные КСГ не соответствует страховому случаю SPR69, SPR70
+     * @param visits
+     */
     void checkForIncorrectSpr69(Collection<NewVisit> visits) {
         if (visits.isEmpty()) {
             return;
         }
-        if (!visits.stream().findFirst().get().getServices().stream().findFirst().get().getKusl().startsWith("G")) {
+
+        if (visits.stream().findFirst().get().getServices().stream().filter(e->e.getKusl().startsWith("G")).count()==0) {
             return;
         }
-        if ((Objects.isNull(spr69HashsWithMkb)
-                || Objects.isNull(spr69HashsWithOutMkb))
-                || (spr69HashsWithMkb.isEmpty()
-                || spr69HashsWithOutMkb.isEmpty())) {
-            spr69HashsWithMkb = new ArrayList<>();
-            spr69HashsWithOutMkb = new ArrayList<>();
-            for (Spr69Value spr69Value : spr69List) {
-                spr69HashsWithMkb.add(spr69Value.getKsgcode() + spr69Value.getKusl() + spr69Value.getMkbx());
-                spr69HashsWithOutMkb.add(spr69Value.getKsgcode() + spr69Value.getKusl());
-            }
+
+        Map<String, Map<String, Set<String>>> collect = null;
+
+        if (Objects.isNull(collect)) {
+            collect = spr69List.stream().collect(Collectors.groupingBy(e -> e.getKsgcode(), Collectors.groupingBy(o -> o.getKusl(), Collectors.mapping(o -> o.getMkbx(), Collectors.toSet()))));
         }
+
         for (NewVisit visit : visits) {
+            boolean hasError = true;
             String operation = "";
             String mkb = visit.getMKB();
             String ksg = "";
@@ -454,9 +456,20 @@ public class ErrorChecker {
                     ksg = service.getKusl();
                 }
             }
-            if (!(spr69HashsWithMkb.contains(ksg + operation + mkb) && spr69HashsWithOutMkb.contains(ksg + operation))) {
+            if (!collect.containsKey(ksg)){
+                continue;
+            }
+            if (collect.containsKey(ksg)){
+                if (collect.get(ksg).containsKey(operation)){
+                    if (collect.get(ksg).get(operation).contains(mkb)){
+                        hasError = false;
+                    }
+                }
+            }
+            if (hasError) {
                 errors.addError(visit, "КСГ не соответствует SPR69");
             }
+
         }
     }
 
@@ -593,5 +606,9 @@ public class ErrorChecker {
                 }
             }
         }
+    }
+
+    public void setSpr69List(List<Spr69Value> spr69List) {
+        this.spr69List = spr69List;
     }
 }
