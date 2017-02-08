@@ -32,8 +32,7 @@ public class ErrorChecker {
     private String smo;
     @Resource(name = "spr69List")
     private List<Spr69Value> spr69List;
-    private List<String> spr69HashsWithMkb;
-    private List<String> spr69HashsWithOutMkb;
+    private Map<String, Map<String, Set<String>>> collect = null;
 
     public ErrorChecker() {
     }
@@ -438,8 +437,6 @@ public class ErrorChecker {
             return;
         }
 
-        Map<String, Map<String, Set<String>>> collect = null;
-
         if (Objects.isNull(collect)) {
             collect = spr69List.stream().collect(Collectors.groupingBy(e -> e.getKsgcode(), Collectors.groupingBy(o -> o.getKusl(), Collectors.mapping(o -> o.getMkbx(), Collectors.toSet()))));
         }
@@ -462,6 +459,8 @@ public class ErrorChecker {
             if (collect.containsKey(ksg)){
                 if (collect.get(ksg).containsKey(operation)){
                     if (collect.get(ksg).get(operation).contains(mkb)){
+                        hasError = false;
+                    }else if(collect.get(ksg).get(operation).contains("")){
                         hasError = false;
                     }
                 }
