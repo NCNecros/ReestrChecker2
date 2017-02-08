@@ -88,7 +88,7 @@ public class ErrorCheckerTest {
                 visit.setIshob(elem.getKey());
                 visit.setIshl(s + "0");
                 errorChecker.checkForError903(Collections.singletonList(visit));
-                verify(listOfError).addError(visit, "иход лечения не соответствует исходу обращения");
+                verify(listOfError).addError(visit, "903 исход лечения не соответствует исходу обращения");
             }
         }
     }
@@ -124,7 +124,7 @@ public class ErrorCheckerTest {
 
         errorChecker.checkForMoreThanOneVisit(newHumans);
 
-        verify(listOfError, times(2)).addError(any(NewVisit.class), eq("содержит более одного обращения"));
+        verify(listOfError, times(2)).addError(any(NewVisit.class), eq("(307) содержит более одного обращения"));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class ErrorCheckerTest {
 
         errorChecker.checkForMoreThanOneVisit(newHumans);
 
-        verify(listOfError).addError(visitOne, "содержит более одного обращения");
+        verify(listOfError).addError(visitOne, "(307) содержит более одного обращения");
 
     }
 
